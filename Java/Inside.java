@@ -5,8 +5,7 @@
 
 // line 169 "model.ump"
 // line 254 "model.ump"
-public class Inside extends Cell
-{
+public class Inside implements Cell {
 
   //------------------------
   // MEMBER VARIABLES
@@ -27,13 +26,18 @@ public class Inside extends Cell
 
   public void delete()
   {
-    super.delete();
+    Cell.super.delete();
   }
 
   // line 174 "model.ump"
    public String toString(){
-    
+    return "Inside";
   }
+
+    @Override
+    public String toBoardString() {
+        return "I";
+    }
 
   // line 176 "model.ump"
    public boolean isWalkable(){

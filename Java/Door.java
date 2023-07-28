@@ -6,8 +6,7 @@ import java.util.*;
 
 // line 180 "model.ump"
 // line 259 "model.ump"
-public class Door extends Cell
-{
+public class Door implements Cell {
 
   //------------------------
   // MEMBER VARIABLES
@@ -137,17 +136,22 @@ public class Door extends Cell
   public void delete()
   {
     estates.clear();
-    super.delete();
+    Cell.super.delete();
   }
 
   // line 188 "model.ump"
    public String toString(){
-    
+    return "Door";
+    }
+
+  @Override
+  public String toBoardString() {
+    return "D";
   }
 
   // line 190 "model.ump"
-   public Estate isEntrance(){
-    return estate;
+   public boolean isEntrance(){
+    return true;
   }
 
 }

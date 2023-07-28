@@ -2,6 +2,8 @@
 /*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
 
 
+import java.util.List;
+import java.util.Set;
 
 // line 113 "model.ump"
 // line 239 "model.ump"
@@ -13,26 +15,27 @@ public class Estate
   //------------------------
 
   //Estate Attributes
-  private List<Cell> estateCells;
+  public String name;
+  private List<Inside> estateCells;
   private Set<Person> playersInEstate;
-  private Weapon weapon;
+  //private Weapon weapon;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Estate(List<Cell> aEstateCells, Set<Person> aPlayersInEstate, Weapon aWeapon)
+  public Estate(List<Inside> aEstateCells, Set<Person> aPlayersInEstate)
   {
     estateCells = aEstateCells;
     playersInEstate = aPlayersInEstate;
-    weapon = aWeapon;
+    //weapon = aWeapon;
   }
 
   //------------------------
   // INTERFACE
   //------------------------
 
-  public boolean setEstateCells(List<Cell> aEstateCells)
+  public boolean setEstateCells(List<Inside> aEstateCells)
   {
     boolean wasSet = false;
     estateCells = aEstateCells;
@@ -48,6 +51,7 @@ public class Estate
     return wasSet;
   }
 
+  /*
   public boolean setWeapon(Weapon aWeapon)
   {
     boolean wasSet = false;
@@ -56,7 +60,9 @@ public class Estate
     return wasSet;
   }
 
-  public List<Cell> getEstateCells()
+   */
+
+  public List<Inside> getEstateCells()
   {
     return estateCells;
   }
@@ -66,10 +72,13 @@ public class Estate
     return playersInEstate;
   }
 
+  /*
   public Weapon getWeapon()
   {
     return weapon;
   }
+
+   */
 
   public void delete()
   {}
@@ -89,7 +98,7 @@ public class Estate
    */
   // line 130 "model.ump"
   public boolean removePerson(Person person){
-    
+    return false;
   }
 
 
@@ -103,7 +112,6 @@ public class Estate
 
   // line 141 "model.ump"
   public String toString(){
-    
+    return "Estate" + this.name;
   }
-
 }

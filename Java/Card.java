@@ -64,9 +64,9 @@ public class Card
    * Returns if cards are equal
    */
   // line 153 "model.ump"
-   public bool equals(Card other){
-    
-  }
+   public boolean equals(Card other){
+    return this.cardType == other.cardType;
+    }
 
 
   public String toString()

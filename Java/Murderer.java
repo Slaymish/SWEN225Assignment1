@@ -8,6 +8,16 @@ import java.util.*;
 // line 226 "model.ump"
 public class Murderer extends Game
 {
+  //------------------------
+  // DEVELOPER CODE - PROVIDED AS-IS
+  //------------------------
+
+  // line 67 "model.ump"
+  private Card weapon ;
+  // line 68 "model.ump"
+  private Card estate ;
+  // line 69 "model.ump"
+  private Card person ;
 
   //------------------------
   // MEMBER VARIABLES
@@ -17,7 +27,7 @@ public class Murderer extends Game
   // CONSTRUCTOR
   //------------------------
 
-  public Murderer(int aCurrentPlayerTurn, Board aBoard, List<Card> aAllCards, Murderer aMurderer, Map<Int,Player> aPlayerMap)
+  public Murderer(int aCurrentPlayerTurn, Board aBoard, List<Card> aAllCards, Murderer aMurderer, Map<Integer,Player> aPlayerMap)
   {
     super(aCurrentPlayerTurn, aBoard, aAllCards, aMurderer, aPlayerMap);
   }
@@ -37,7 +47,7 @@ public class Murderer extends Game
    */
   // line 76 "model.ump"
   public boolean checkMurderer(Card weapon, Card estate, Card person){
-    
+    return false;
   }
 
 
@@ -46,19 +56,6 @@ public class Murderer extends Game
    */
   // line 83 "model.ump"
   public String toString(Card weapon, Card estate, Card person){
-    
+    return "Murder!";
   }
-  
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 67 "model.ump"
-  private Card weapon ;
-// line 68 "model.ump"
-  private Card estate ;
-// line 69 "model.ump"
-  private Card person ;
-
-  
 }

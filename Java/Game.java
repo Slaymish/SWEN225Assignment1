@@ -18,7 +18,7 @@ public class Game
   private Board board;
   private List<Card> allCards;
   private Murderer murderer;
-  private Map<Int,Player> playerMap;
+  private Map<Integer,Player> playerMap;
 
   //Game Associations
   private List<Board> boards;
@@ -29,7 +29,7 @@ public class Game
   // CONSTRUCTOR
   //------------------------
 
-  public Game(int aCurrentPlayerTurn, Board aBoard, List<Card> aAllCards, Murderer aMurderer, Map<Int,Player> aPlayerMap)
+  public Game(int aCurrentPlayerTurn, Board aBoard, List<Card> aAllCards, Murderer aMurderer, Map<Integer,Player> aPlayerMap)
   {
     currentPlayerTurn = aCurrentPlayerTurn;
     board = aBoard;
@@ -77,7 +77,7 @@ public class Game
     return wasSet;
   }
 
-  public boolean setPlayerMap(Map<Int,Player> aPlayerMap)
+  public boolean setPlayerMap(Map<Integer,Player> aPlayerMap)
   {
     boolean wasSet = false;
     playerMap = aPlayerMap;
@@ -105,7 +105,7 @@ public class Game
     return murderer;
   }
 
-  public Map<Int,Player> getPlayerMap()
+  public Map<Integer,Player> getPlayerMap()
   {
     return playerMap;
   }
@@ -380,11 +380,11 @@ public class Game
 
   // line 12 "model.ump"
    private void Setup(){
-    board = new Board();
+    //board = new Board();
     
-    allCards = CreateCards() p //randomize and create cards
+    allCards = CreateCards();  //randomize and create cards
     //distribute cards
-    murderer = EstablishMurderer(allCards) p // set one card of each type as murder
+    murderer = EstablishMurderer(allCards);  // set one card of each type as murder
   }
 
   // line 20 "model.ump"
@@ -405,8 +405,9 @@ public class Game
    */
   // line 36 "model.ump"
    private List<Card> CreateCards(){
-    
-  }
+
+     return null;
+   }
 
 
   /**
@@ -414,8 +415,9 @@ public class Game
    */
   // line 42 "model.ump"
    private Murderer EstablishMurderer(List<Card> cards){
-    
-  }
+
+     return null;
+   }
 
 
   /**
@@ -432,8 +434,9 @@ public class Game
    */
   // line 58 "model.ump"
    public Card getCardByName(String cardName){
-    
-  }
+
+     return null;
+   }
 
 
   public String toString()

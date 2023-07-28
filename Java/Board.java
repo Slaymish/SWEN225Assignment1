@@ -280,6 +280,7 @@ public class Board
    */
   // line 105 "model.ump"
    public String toString(){
+     return "board object";
     
   }
 

@@ -5,47 +5,36 @@
 
 // line 156 "model.ump"
 // line 249 "model.ump"
-public class Cell
+interface Cell
 {
-
-  //------------------------
-  // MEMBER VARIABLES
-  //------------------------
-
-  //------------------------
-  // CONSTRUCTOR
-  //------------------------
-
-  public Cell()
-  {}
-
   //------------------------
   // INTERFACE
   //------------------------
 
-  public void delete()
+  public default void delete()
   {}
 
   // line 160 "model.ump"
-   public String toString(){
-    
+  default String toBoardString (){
+    return "_";
   }
+
+
   
   //------------------------
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------
   
   // line 161 "model.ump"
-  public default boolean isWalkable () 
+  default boolean isWalkable ()
   {
     return true;
   }
 
 // line 164 "model.ump"
-  public default boolean isEntrance () 
+  default boolean isEntrance ()
   {
-    q
-    return null;
+    return false;
   }
 
   
