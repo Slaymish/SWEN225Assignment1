@@ -13,14 +13,15 @@ public class Card
   //------------------------
 
   //Card Attributes
-  private int cardType;
+  enum CardType{Character, Weapon, Estate}
+  CardType cardType;
   private String cardName;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Card(int aCardType, String aCardName)
+  public Card(CardType aCardType, String aCardName)
   {
     cardType = aCardType;
     cardName = aCardName;
@@ -30,7 +31,7 @@ public class Card
   // INTERFACE
   //------------------------
 
-  public int getCardType()
+  public CardType getCardType()
   {
     return cardType;
   }
