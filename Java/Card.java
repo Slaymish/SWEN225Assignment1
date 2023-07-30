@@ -30,49 +30,27 @@ public class Card
   // INTERFACE
   //------------------------
 
-  public boolean setCardType(int aCardType)
-  {
-    boolean wasSet = false;
-    cardType = aCardType;
-    wasSet = true;
-    return wasSet;
-  }
-
-  public boolean setCardName(String aCardName)
-  {
-    boolean wasSet = false;
-    cardName = aCardName;
-    wasSet = true;
-    return wasSet;
-  }
-
   public int getCardType()
   {
     return cardType;
   }
-
   public String getCardName()
   {
     return cardName;
   }
 
-  public void delete()
-  {}
-
 
   /**
    * Returns if cards are equal
    */
-  // line 153 "model.ump"
    public boolean equals(Card other){
-    return this.cardType == other.cardType;
-    }
+     return (this.getCardType() == other.getCardType())
+             && this.getCardName().equals( other.getCardName() );
+   }
 
 
   public String toString()
   {
-    return super.toString() + "["+
-            "cardType" + ":" + getCardType()+ "," +
-            "cardName" + ":" + getCardName()+ "]";
+    return this.getCardType() + ": " + this.getCardName();
   }
 }
