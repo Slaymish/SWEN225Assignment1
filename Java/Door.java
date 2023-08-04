@@ -1,7 +1,6 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
 
-
 import java.util.*;
 
 // line 180 "model.ump"
@@ -144,14 +143,16 @@ public class Door implements Cell {
     return "Door";
     }
 
-  @Override
-  public String toBoardString() {
-    return "D";
-  }
 
   // line 190 "model.ump"
    public boolean isEntrance(){
     return true;
   }
+
+@Override
+public String getDisplayChar() {
+	// TODO Auto-generated method stub
+	return "D";
+}
 
 }

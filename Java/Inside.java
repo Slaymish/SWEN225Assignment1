@@ -2,7 +2,6 @@
 /*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
 
 
-
 // line 169 "model.ump"
 // line 254 "model.ump"
 public class Inside implements Cell {
@@ -34,14 +33,16 @@ public class Inside implements Cell {
     return "Inside";
   }
 
-    @Override
-    public String toBoardString() {
-        return "I";
-    }
 
   // line 176 "model.ump"
    public boolean isWalkable(){
     return false;
   }
+
+@Override
+public String getDisplayChar() {
+	// TODO Auto-generated method stub
+	return "I";
+}
 
 }
