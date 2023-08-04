@@ -1,13 +1,12 @@
 /*PLEASE DO NOT EDIT THIS CODE*/
 /*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
 
-
 import java.util.List;
 import java.util.Set;
 
 // line 113 "model.ump"
 // line 239 "model.ump"
-public class Estate
+public class Estate  
 {
 
   //------------------------
@@ -24,11 +23,9 @@ public class Estate
   // CONSTRUCTOR
   //------------------------
 
-  public Estate(List<Inside> aEstateCells, Set<Person> aPlayersInEstate)
+  public Estate(String name)
   {
-    estateCells = aEstateCells;
-    playersInEstate = aPlayersInEstate;
-    //weapon = aWeapon;
+   this.name = name;
   }
 
   //------------------------
@@ -112,6 +109,7 @@ public class Estate
 
   // line 141 "model.ump"
   public String toString(){
-    return "Estate" + this.name;
+    return "Estate: " + this.name;
   }
+
 }
