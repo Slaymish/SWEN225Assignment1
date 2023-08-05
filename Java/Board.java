@@ -25,8 +25,87 @@ public class Board
 
   public Board()
   { 	
-	board = new Cell[BoardHeight][BoardWidth];
+	  board = new Cell[BoardHeight][BoardWidth];
     initializeBoard();
+  }
+
+  //------------------------
+  // INTERFACE
+  //------------------------
+  /* Code from template attribute_SetMany */
+  public boolean addCellData(Cell aCellData)
+  {
+    boolean wasAdded = false;
+    wasAdded = cellData.add(aCellData);
+    return wasAdded;
+  }
+
+  public boolean removeCellData(Cell aCellData)
+  {
+    boolean wasRemoved = false;
+    wasRemoved = cellData.remove(aCellData);
+    return wasRemoved;
+  }
+
+  public boolean setEstateList(List<Estate> aEstateList)
+  {
+    boolean wasSet = false;
+    estateList = aEstateList;
+    wasSet = true;
+    return wasSet;
+  }
+  /* Code from template attribute_GetMany */
+  public Cell getCellData(int index)
+  {
+    Cell aCellData = cellData.get(index);
+    return aCellData;
+  }
+
+  public Cell[] getCellData()
+  {
+    Cell[] newCellData = cellData.toArray(new Cell[cellData.size()]);
+    return newCellData;
+  }
+
+  public int numberOfCellData()
+  {
+    int number = cellData.size();
+    return number;
+  }
+
+  public boolean hasCellData()
+  {
+    boolean has = cellData.size() > 0;
+    return has;
+  }
+
+  public int indexOfCellData(Cell aCellData)
+  {
+    int index = cellData.indexOf(aCellData);
+    return index;
+  }
+
+  public List<Estate> getEstateList()
+  {
+    return estateList;
+  }
+  /* Code from template association_GetMany */
+  public Cell getCell(int index)
+  {
+    Cell aCell = cells.get(index);
+    return aCell;
+  }
+
+  public List<Cell> getCells()
+  {
+    List<Cell> newCells = Collections.unmodifiableList(cells);
+    return newCells;
+  }
+
+  public int numberOfCells()
+  {
+    int number = cells.size();
+    return number;
   }
 
   private void initializeBoard() { //empty board full of empty cells
