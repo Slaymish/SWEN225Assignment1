@@ -1,11 +1,6 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
-
-
+import java.util.ArrayList;
 import java.util.List;
 
-// line 205 "model.ump"
-// line 270 "model.ump"
 public class Player
 {
 
@@ -15,31 +10,22 @@ public class Player
 
   //Player Attributes
   private String name;
-  private boolean hasGuessed;
+  private boolean hasGuessed = false;
   private List<Card> cards;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Player(String aName, boolean aHasGuessed, List<Card> aCards)
+  public Player(String aName)
   {
     name = aName;
-    hasGuessed = aHasGuessed;
-    cards = aCards;
+    cards = new ArrayList<Card>();
   }
 
   //------------------------
   // INTERFACE
   //------------------------
-
-  public boolean setName(String aName)
-  {
-    boolean wasSet = false;
-    name = aName;
-    wasSet = true;
-    return wasSet;
-  }
 
   public boolean setHasGuessed(boolean aHasGuessed)
   {
@@ -55,6 +41,11 @@ public class Player
     cards = aCards;
     wasSet = true;
     return wasSet;
+  }
+
+  public void addCard(Card card)
+  {
+    cards.add(card);
   }
 
   public String getName()

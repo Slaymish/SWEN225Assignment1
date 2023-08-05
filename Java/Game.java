@@ -1,440 +1,292 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
-
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 
-// line 2 "model.ump"
-// line 218 "model.ump"
-public class Game {
+public class Game
+{
 
-    //------------------------
-    // MEMBER VARIABLES
-    //------------------------
+  //------------------------
+  // MEMBER VARIABLES
+  //------------------------
 
-    //Game Attributes
-    private int currentPlayerTurn;
-    private Board board;
-    private List < Card > allCards;
-    private Murderer murderer;
-    private Map < Integer, Player > playerMap;
+  //Game Attributes
+  private  int playerNum = 4;
+  private int currentPlayerTurn = 0;
+  private Board board;
+  private List<Card> allCards;
+  private Murderer murderer;
+  private Map<Integer,Player> playerMap;
 
-    //Game Associations
-    private List < Board > boards;
-    private List < Card > cards;
-    private List < Player > players;
+  private boolean gameRunning = false;
 
-    //------------------------
-    // CONSTRUCTOR
-    //------------------------
+  //------------------------
+  // CONSTRUCTOR
+  //------------------------
 
-    public Game(int aCurrentPlayerTurn, Board aBoard, List < Card > aAllCards, Murderer aMurderer, Map < Integer, Player > aPlayerMap) {
-        // note - while making the main loop i found that this constructor is run twice for some reason and i don't know how.
-        
-        currentPlayerTurn = aCurrentPlayerTurn;
-        board = aBoard;
-        allCards = aAllCards;
-        murderer = aMurderer;
-        playerMap = aPlayerMap;
-        boards = new ArrayList < Board > ();
-        cards = new ArrayList < Card > ();
-        players = new ArrayList < Player > ();
-        MainLoop();
-    }
+  public Game()
+  {
 
-    //------------------------
-    // INTERFACE
-    //------------------------
+  }
 
-    /**
-     *  Main loop - controls the game, takes input from user and prints output
-     */
-    private void MainLoop() {
-        boolean running = true;
-        
-        // starting message
-        System.out.println("//////////////////////////\n//// HOBBY DETECTIVES ////\n//////////////////////////");
-        
-        // take input for game setup
-        Scanner input = new Scanner(System.in);
-        int players = getPlayers(input);
-        
-        // main loop
-        while(running) {
-            // take input
-            
-            // output
+  //------------------------
+  // INTERFACE
+  //------------------------
+
+  public int getCurrentPlayerTurn()
+  {
+    return currentPlayerTurn;
+  }
+
+  public Board getBoard()
+  {
+    return board;
+  }
+
+  public List<Card> getAllNonMurderCards()
+  {
+    return allCards;
+  }
+
+  public Murderer getMurderer()
+  {
+    return murderer;
+  }
+
+  public Map<Integer,Player> getPlayerMap()
+  {
+    return playerMap;
+  }
+
+  /**
+   * Handles setting up the game
+   */
+   public void Setup(){
+     System.out.println("Setting Up Game");
+    board = new Board();
+
+    //Create cards
+    var weaponCards = CreateWeaponCards();
+    var characterCards = CreateCharacterCards();
+    var estateCards = CreateEstateCards();
+
+    //Get the murder cards
+    Card murderWeapon = weaponCards.remove(getRandomNumber(0,weaponCards.size()));
+    Card murderEstate = estateCards.remove(getRandomNumber(0,estateCards.size()));
+    Card murderCharacter = characterCards.remove(getRandomNumber(0,characterCards.size()));
+
+    //Picks out a random murder
+    murderer = new Murderer(murderWeapon,murderEstate,murderCharacter);
+
+    //Merge and shuffle all cards
+    allCards = new ArrayList<>();
+    allCards.addAll(weaponCards);
+    allCards.addAll(characterCards);
+    allCards.addAll(estateCards);
+    Collections.shuffle(allCards);
+
+    //Get player count
+     System.out.println("How Many Players, (3 or 4)?");
+
+     try {
+       InputStreamReader isr = new InputStreamReader(System.in);
+       BufferedReader br = new BufferedReader(isr);
+
+       String in = br.readLine();
+
+       while(!(in.equals("3") | in.equals("4"))){
+         System.out.println("(3 or 4)?");
+         in = br.readLine();
+       }
+       playerNum = Integer.parseInt(in);
+
+     }catch (IOException ioe){
+       System.out.println("IO Exception raised With setting player count");
+     }
+
+    //Create players and order them for turns
+    playerMap = CreatePlayers(allCards, playerNum);
+
+    //re add the murder cards to the deck
+     allCards.add(murderWeapon);
+     allCards.add(murderCharacter);
+     allCards.add(murderEstate);
+
+  }
+
+  /**
+   * Handles running the game
+   */
+  public void Run(){
+    System.out.println("Starting Game");
+
+    gameRunning = true;
+    while(gameRunning){
+
+      //Display board at start of turn
+      DisplayBoard();
+
+      DisplayTurnInfo();
+      //Get a valid input
+      boolean validInput = false;
+
+      try{
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader br = new BufferedReader(isr);
+
+        //need to roll dice for max movement, display
+
+        System.out.println("Where do you want to move?");
+        String input =  input = br.readLine();
+
+        //Handle quit
+        if(input.equals("q") | input.equals("quit")){
+          System.out.println("Stopping Game");
+          return;
         }
-    }
-    
-    /**
-     * gets number of players
-     */
-    public int getPlayers(Scanner sc) {
-        System.out.println("Enter number of players (3-4)");
-        int players = sc.nextInt();
-        if(players <= 2 || players > 4) {
-            players = getPlayers(sc);
-        }
-        return players;
-    }
 
-    public boolean setCurrentPlayerTurn(int aCurrentPlayerTurn) {
-        boolean wasSet = false;
-        currentPlayerTurn = aCurrentPlayerTurn;
-        wasSet = true;
-        return wasSet;
-    }
+        //validate input
+        while(!CheckValidInput(input)) {
 
-    public boolean setBoard(Board aBoard) {
-        boolean wasSet = false;
-        board = aBoard;
-        wasSet = true;
-        return wasSet;
-    }
-
-    public boolean setAllCards(List < Card > aAllCards) {
-        boolean wasSet = false;
-        allCards = aAllCards;
-        wasSet = true;
-        return wasSet;
-    }
-
-    public boolean setMurderer(Murderer aMurderer) {
-        boolean wasSet = false;
-        murderer = aMurderer;
-        wasSet = true;
-        return wasSet;
-    }
-
-    public boolean setPlayerMap(Map < Integer, Player > aPlayerMap) {
-        boolean wasSet = false;
-        playerMap = aPlayerMap;
-        wasSet = true;
-        return wasSet;
-    }
-
-    public int getCurrentPlayerTurn() {
-        return currentPlayerTurn;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-    public List < Card > getAllCards() {
-        return allCards;
-    }
-
-    public Murderer getMurderer() {
-        return murderer;
-    }
-
-    public Map < Integer, Player > getPlayerMap() {
-        return playerMap;
-    }
-    /* Code from template association_GetMany */
-    public Board getBoard(int index) {
-        Board aBoard = boards.get(index);
-        return aBoard;
-    }
-
-    public List < Board > getBoards() {
-        List < Board > newBoards = Collections.unmodifiableList(boards);
-        return newBoards;
-    }
-
-    public int numberOfBoards() {
-        int number = boards.size();
-        return number;
-    }
-
-    public boolean hasBoards() {
-        boolean has = boards.size() > 0;
-        return has;
-    }
-
-    public int indexOfBoard(Board aBoard) {
-        int index = boards.indexOf(aBoard);
-        return index;
-    }
-    /* Code from template association_GetMany */
-    public Card getCard(int index) {
-        Card aCard = cards.get(index);
-        return aCard;
-    }
-
-    public List < Card > getCards() {
-        List < Card > newCards = Collections.unmodifiableList(cards);
-        return newCards;
-    }
-
-    public int numberOfCards() {
-        int number = cards.size();
-        return number;
-    }
-
-    public boolean hasCards() {
-        boolean has = cards.size() > 0;
-        return has;
-    }
-
-    public int indexOfCard(Card aCard) {
-        int index = cards.indexOf(aCard);
-        return index;
-    }
-    /* Code from template association_GetMany */
-    public Player getPlayer(int index) {
-        Player aPlayer = players.get(index);
-        return aPlayer;
-    }
-
-    public List < Player > getPlayers() {
-        List < Player > newPlayers = Collections.unmodifiableList(players);
-        return newPlayers;
-    }
-
-    public int numberOfPlayers() {
-        int number = players.size();
-        return number;
-    }
-
-    public boolean hasPlayers() {
-        boolean has = players.size() > 0;
-        return has;
-    }
-
-    public int indexOfPlayer(Player aPlayer) {
-        int index = players.indexOf(aPlayer);
-        return index;
-    }
-    /* Code from template association_MinimumNumberOfMethod */
-    public static int minimumNumberOfBoards() {
-        return 0;
-    }
-    /* Code from template association_AddUnidirectionalMany */
-    public boolean addBoard(Board aBoard) {
-        boolean wasAdded = false;
-        if (boards.contains(aBoard)) {
-            return false;
-        }
-        boards.add(aBoard);
-        wasAdded = true;
-        return wasAdded;
-    }
-
-    public boolean removeBoard(Board aBoard) {
-        boolean wasRemoved = false;
-        if (boards.contains(aBoard)) {
-            boards.remove(aBoard);
-            wasRemoved = true;
-        }
-        return wasRemoved;
-    }
-    /* Code from template association_AddIndexControlFunctions */
-    public boolean addBoardAt(Board aBoard, int index) {
-        boolean wasAdded = false;
-        if (addBoard(aBoard)) {
-            if (index < 0) {
-                index = 0;
+            if(input.equals("q") | input.equals("quit")){
+                System.out.println("Stopping Game");
+                return;
             }
-            if (index > numberOfBoards()) {
-                index = numberOfBoards() - 1;
-            }
-            boards.remove(aBoard);
-            boards.add(index, aBoard);
-            wasAdded = true;
+
+          System.out.println("Input not valid");
+          input = br.readLine();
         }
-        return wasAdded;
+        //do move
+
+
+      }
+      catch (IOException ioe){
+        System.out.println("IO Exception raised With Move Input");
+      }
+
+      NextPlayerTurn();
+    }
+  }
+
+  private int getRandomNumber(int min,int max){
+    return (int) (Math.random() * (max - min) + min);
+  }
+
+  /**
+   * Creates and returns a list of Weapon cards
+   */
+  private List<Card> CreateWeaponCards(){
+     List<Card> cards = new ArrayList<>();
+     cards.add(new Card(Card.CardType.Weapon, "Broom"));
+     cards.add(new Card(Card.CardType.Weapon, "Scissors"));
+     cards.add(new Card(Card.CardType.Weapon, "Knife"));
+     cards.add(new Card(Card.CardType.Weapon, "Shovel"));
+     cards.add(new Card(Card.CardType.Weapon, "IPad"));
+     return cards;
+   }
+  /**
+   * Creates and returns a list of Character cards
+   */
+  private List<Card> CreateCharacterCards(){
+    List<Card> cards = new ArrayList<>();
+    cards.add(new Card(Card.CardType.Character, "Lucillia"));
+    cards.add(new Card(Card.CardType.Character, "Bert"));
+    cards.add(new Card(Card.CardType.Character, "Malina"));
+    cards.add(new Card(Card.CardType.Character, "Percy"));
+    return cards;
+  }
+  /**
+   * Creates and returns a list of Estate cards
+   */
+  private List<Card> CreateEstateCards(){
+    List<Card> cards = new ArrayList<>();
+    cards.add(new Card(Card.CardType.Estate, "Haunted House"));
+    cards.add(new Card(Card.CardType.Estate, "Manic Manor"));
+    cards.add(new Card(Card.CardType.Estate, "Visitation Villa"));
+    cards.add(new Card(Card.CardType.Estate, "Calamity Castle"));
+    cards.add(new Card(Card.CardType.Estate, "Peril Palace"));
+    return cards;
+  }
+
+  /**
+   * Creates players and allocates cards to them
+   */
+  Map<Integer, Player> CreatePlayers(List<Card> cards, int playerNum){
+    //Only handling 3 or 4 players case
+
+    var players = new ArrayList<Player>();
+    players.add(new Player("Lucilla"));
+    players.add(new Player("Bert"));
+    players.add(new Player("Malina"));
+
+    //only adds player if needed
+    if(playerNum>= 4) players.add(new Player("Percy"));
+
+    //Goes through every card
+    int i = 0;
+    while(i < cards.size()){
+      //Adds a card to each player until no cards are left
+      for (Player p: players) {
+        p.addCard(cards.get(i));
+        i++;
+        if(i >= cards.size()) break;
+      }
     }
 
-    public boolean addOrMoveBoardAt(Board aBoard, int index) {
-        boolean wasAdded = false;
-        if (boards.contains(aBoard)) {
-            if (index < 0) {
-                index = 0;
-            }
-            if (index > numberOfBoards()) {
-                index = numberOfBoards() - 1;
-            }
-            boards.remove(aBoard);
-            boards.add(index, aBoard);
-            wasAdded = true;
-        } else {
-            wasAdded = addBoardAt(aBoard, index);
-        }
-        return wasAdded;
+    //Turn order
+    var playerMap = new HashMap<Integer, Player>();
+    for(int p = 0; p < players.size(); p++){
+      playerMap.put(p, players.get(p));
     }
-    /* Code from template association_MinimumNumberOfMethod */
-    public static int minimumNumberOfCards() {
-        return 0;
-    }
-    /* Code from template association_AddUnidirectionalMany */
-    public boolean addCard(Card aCard) {
-        boolean wasAdded = false;
-        if (cards.contains(aCard)) {
-            return false;
-        }
-        cards.add(aCard);
-        wasAdded = true;
-        return wasAdded;
-    }
+    return playerMap;
+  }
 
-    public boolean removeCard(Card aCard) {
-        boolean wasRemoved = false;
-        if (cards.contains(aCard)) {
-            cards.remove(aCard);
-            wasRemoved = true;
-        }
-        return wasRemoved;
-    }
-    /* Code from template association_AddIndexControlFunctions */
-    public boolean addCardAt(Card aCard, int index) {
-        boolean wasAdded = false;
-        if (addCard(aCard)) {
-            if (index < 0) {
-                index = 0;
-            }
-            if (index > numberOfCards()) {
-                index = numberOfCards() - 1;
-            }
-            cards.remove(aCard);
-            cards.add(index, aCard);
-            wasAdded = true;
-        }
-        return wasAdded;
-    }
 
-    public boolean addOrMoveCardAt(Card aCard, int index) {
-        boolean wasAdded = false;
-        if (cards.contains(aCard)) {
-            if (index < 0) {
-                index = 0;
-            }
-            if (index > numberOfCards()) {
-                index = numberOfCards() - 1;
-            }
-            cards.remove(aCard);
-            cards.add(index, aCard);
-            wasAdded = true;
-        } else {
-            wasAdded = addCardAt(aCard, index);
-        }
-        return wasAdded;
-    }
-    /* Code from template association_MinimumNumberOfMethod */
-    public static int minimumNumberOfPlayers() {
-        return 0;
-    }
-    /* Code from template association_AddUnidirectionalMany */
-    public boolean addPlayer(Player aPlayer) {
-        boolean wasAdded = false;
-        if (players.contains(aPlayer)) {
-            return false;
-        }
-        players.add(aPlayer);
-        wasAdded = true;
-        return wasAdded;
-    }
+  /**
+   * Gets and displays the board to the screen
+   */
+   private void DisplayBoard(){
+    System.out.println(board.toString());
+  }
 
-    public boolean removePlayer(Player aPlayer) {
-        boolean wasRemoved = false;
-        if (players.contains(aPlayer)) {
-            players.remove(aPlayer);
-            wasRemoved = true;
-        }
-        return wasRemoved;
-    }
-    /* Code from template association_AddIndexControlFunctions */
-    public boolean addPlayerAt(Player aPlayer, int index) {
-        boolean wasAdded = false;
-        if (addPlayer(aPlayer)) {
-            if (index < 0) {
-                index = 0;
-            }
-            if (index > numberOfPlayers()) {
-                index = numberOfPlayers() - 1;
-            }
-            players.remove(aPlayer);
-            players.add(index, aPlayer);
-            wasAdded = true;
-        }
-        return wasAdded;
-    }
+  /**
+   * Displays who's turn it is
+   */
+  private void DisplayTurnInfo(){
+    System.out.println("It is " + playerMap.get(currentPlayerTurn).toString() + " Player: " + (currentPlayerTurn + 1) +"'s turn:");
+  }
 
-    public boolean addOrMovePlayerAt(Player aPlayer, int index) {
-        boolean wasAdded = false;
-        if (players.contains(aPlayer)) {
-            if (index < 0) {
-                index = 0;
-            }
-            if (index > numberOfPlayers()) {
-                index = numberOfPlayers() - 1;
-            }
-            players.remove(aPlayer);
-            players.add(index, aPlayer);
-            wasAdded = true;
-        } else {
-            wasAdded = addPlayerAt(aPlayer, index);
-        }
-        return wasAdded;
-    }
+  /**
+   * Sets to next player turn
+   */
+  private void NextPlayerTurn(){
+     System.out.println("End turn");
+    currentPlayerTurn++;
+    if(currentPlayerTurn>=playerNum) currentPlayerTurn = 0;
+  }
 
-    public void delete() {
-        boards.clear();
-        cards.clear();
-        players.clear();
-    }
+  /**
+   * Checks input is valid
+   */
+  private boolean CheckValidInput(String input){
 
-    // line 12 "model.ump"
-    private void Setup() {
-        //board = new Board();
 
-        allCards = CreateCards(); //randomize and create cards
-        //distribute cards
-        murderer = EstablishMurderer(allCards); // set one card of each type as murder
-    }
+     if(input.equals("T")) return true;
 
-    /**
-     * Creates and returns a list of all cards
-     */
-    // line 36 "model.ump"
-    private List < Card > CreateCards() {
 
-        return null;
-    }
+    return false;
+  }
 
-    /**
-     * Picks a random card of each type to establish as     the murderer
-     */
-    // line 42 "model.ump"
-    private Murderer EstablishMurderer(List < Card > cards) {
+  /**
+   * returns the card class of a card by its name, returns null if cant be found
+   */
+   public Card getCardByName(String cardName){
 
-        return null;
-    }
+      for(Card c : allCards){
+        if(c.getCardName().equals(cardName)) return c;
+      }
+      return null;
+   }
 
-    /**
-     * Gets and displays the board to the screen
-     */
-    // line 50 "model.ump"
-    private void DisplayBoard() {
-        System.out.println("Display board placeholder");
-    }
-
-    /**
-     * returns the card class of a card by its name
-     */
-    // line 58 "model.ump"
-    public Card getCardByName(String cardName) {
-
-        return null;
-    }
-
-    public String toString() {
-        return super.toString() + "[" +
-            "currentPlayerTurn" + ":" + getCurrentPlayerTurn() + "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "board" + "=" + (getBoard() != null ? !getBoard().equals(this) ? getBoard().toString().replaceAll("  ", "    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "allCards" + "=" + (getAllCards() != null ? !getAllCards().equals(this) ? getAllCards().toString().replaceAll("  ", "    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "murderer" + "=" + (getMurderer() != null ? !getMurderer().equals(this) ? getMurderer().toString().replaceAll("  ", "    ") : "this" : "null") + System.getProperties().getProperty("line.separator") +
-            "  " + "playerMap" + "=" + (getPlayerMap() != null ? !getPlayerMap().equals(this) ? getPlayerMap().toString().replaceAll("  ", "    ") : "this" : "null");
-    }
 }
