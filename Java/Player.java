@@ -12,7 +12,7 @@ public class Player {
   private boolean hasGuessed = false;
   private List<Card> cards;
 
-  int[] position;
+  int[] position = new int[2];
 
   //------------------------
   // CONSTRUCTOR
@@ -82,9 +82,9 @@ public class Player {
     return position;
   }
 
-    public void move(int x, int y){
-        position[0] += x;
-        position[1] += y;
+    public void move(int[] moveOffset){
+        position[0] += moveOffset[0];
+        position[1] += moveOffset[1];
         //updatePositionOnBoard();
     }
 }

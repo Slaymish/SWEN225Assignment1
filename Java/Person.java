@@ -9,14 +9,18 @@ public class Person implements Cell {
   //------------------------
   // MEMBER VARIABLES
   //------------------------
+    private String name;
+    private Player player;
 
   //------------------------
   // CONSTRUCTOR
   //------------------------
 
-  public Person()
+  public Person(String aName, Player player)
   {
     super();
+    name = aName;
+    this.player = player;
   }
 
   //------------------------
@@ -35,13 +39,15 @@ public class Person implements Cell {
 
     // line 201 "model.ump"
    public boolean isWalkable(){
-    return false;
-  }
+        return false;
+    }
 
-@Override
-public String getDisplayChar() {
-	// TODO Auto-generated method stub
-	return "P";
-}
+    @Override
+    public String getDisplayChar() {
+      return name.substring(0,1);
+    }
 
+    public Player getPlayer() {
+        return player;
+    }
 }

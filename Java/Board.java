@@ -18,6 +18,8 @@ public class Board
     //Board Associations
     private List<Cell> cells;
     private List<Estate> estates;
+
+    private Map<Integer,Person> players;
 	
   //The map is a 24x24 grid
     final int BoardHeight = 24;
@@ -33,6 +35,7 @@ public class Board
   public Board()
   { 	
 	  board = new Cell[BoardHeight][BoardWidth];
+      players = new HashMap<Integer,Person>();
       initializeBoard();
   }
 
@@ -131,7 +134,25 @@ public class Board
 //------------------------
   // INTERFACE
   //------------------------
-  
+
+    public void BuildPeople(HashMap<Integer, Player> playerMap){
+        for (int i = 0; i < playerMap.size(); i++) {
+            Person p = new Person(playerMap.get(i).getName(), playerMap.get(i));
+            players.put(i, p);
+        }
+        updatePeopleOnBoard();
+    }
+
+    /**
+     * Goes through list of players and updates their position on the board
+     */
+    public void updatePeopleOnBoard(){
+        for (int i = 0; i < players.size(); i++) {
+            Person p = players.get(i);
+            int[] pos = p.getPlayer().getPosition();
+            board[pos[0]][pos[1]] = p;
+        }
+    }
   
   public void displayBoard() {
 	  for (int i = 0; i < BoardHeight; i++) {
@@ -221,7 +242,23 @@ public class Board
             board[row][col] = new Door(estate); // Door cell associated with the estate
         }
     }
-	
+
+    /**
+     * Checks if the move is valid
+     * @param playerPos
+     * @param proposedOffset
+     * @return
+     */
+    public boolean isMoveValid(int[] playerPos, int[] proposedOffset) {
+        int[] newPos = new int[2];
+        newPos[0] = playerPos[0] + proposedOffset[0];
+        newPos[1] = playerPos[1] + proposedOffset[1];
+        if (newPos[0] < 0 || newPos[0] >= BoardHeight || newPos[1] < 0 || newPos[1] >= BoardWidth) {
+            return false;
+        }
+        return board[newPos[0]][newPos[1]].isWalkable();
+    }
+
 
     private class EmptyCell implements Cell {
 		public EmptyCell() {}

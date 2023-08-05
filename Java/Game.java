@@ -129,39 +129,56 @@ public class Game
         DisplayBoard();
 
         DisplayTurnInfo();
-      //Get a valid input
-      boolean validInput = false;
+        //Get a valid input
+        boolean validInput = false;
 
       try{
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
 
-        //need to roll dice for max movement, display
-          int[] dice = rollDice();
-          System.out.println("You can move " + dice[2] + " cells");
+        int[] dice = rollDice();
+        System.out.println("You can move " + dice[2] + " cells");
         System.out.println("Where do you want to move?");
-        String input =  input = br.readLine();
 
-        //Handle quit
-        if(input.equals("q") | input.equals("quit")){
-          System.out.println("Stopping Game");
-          return;
-        }
+        String input;
+        int[] move = new int[2];
 
-        //validate input
-        while(!CheckValidInput(input)) {
-            if(input.equals("q") | input.equals("quit")){
+        // Get move input
+        while(!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+
+            if (input.equals("Q") | input.equals("QUIT")) {
                 System.out.println("Stopping Game");
                 return;
             }
 
-          System.out.println("Input not valid");
-          input = br.readLine();
+            try {
+                move = parseInput(input, dice[2]);
+                validInput = true;
+            } catch (IllegalArgumentException iae) { // If error in parsing
+                System.out.println("Invalid Move, try again");
+                displayMoveHelp();
+            }
+
+            if (!board.isMoveValid(playerMap.get(currentPlayerTurn).getPosition(), move)) { // if move is not possible
+                System.out.println("Invalid Move, try again");
+                displayMoveHelp();
+                validInput = false;
+            }
         }
-        //do move
-          // TODO: implement player movement
+
+        // move player
+        // TODO: implement move player
+          System.out.println("Moving player " + currentPlayerTurn + "by  (" + move[0] + "," + move[1] + ")");
 
 
+
+
+          if(currentPlayerInEstate()){
+              System.out.println("You are in an estate");
+              handleAttempt();
+          }
       }
       catch (IOException ioe){
         System.out.println("IO Exception raised With Move Input");
@@ -170,6 +187,92 @@ public class Game
       NextPlayerTurn();
     }
   }
+
+    /**
+     * Returns true if the current player is in an estate
+     * @return
+     */
+    private boolean currentPlayerInEstate() {
+        return false;
+        // TODO: Find out if player is in an estate
+    }
+
+    /**
+     * Handles player guessing/solving
+     * Only called if player is in an estate
+     * @throws IOException
+     */
+    private void handleAttempt() throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Do you want to guess or solve?");
+        boolean validInput = false;
+        String input;
+        while(!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+
+            if (input.equals("Q") | input.equals("QUIT")) {
+                System.out.println("Stopping Game");
+                return;
+            }
+
+            if (input.equals("GUESS") | input.equals("SOLVE")) {
+                validInput = true;
+            } else {
+                System.out.println("Invalid input, try again");
+            }
+        }
+        // TODO implement guess/solve
+    }
+
+    /**
+     * Parses input into a movement array
+     * eg input = "UP 3 RIGHT 2"
+     * case insensitive
+     * returns [x,y] offset
+     * @param input
+     * @return
+     */
+    private int[] parseInput(String input, int maxMove) {
+        int[] move = new int[2];
+        Scanner scanner = new Scanner(input);
+        try {
+            while (scanner.hasNext()) {
+                String direction = scanner.next();
+                switch (direction) {
+                    case "UP":
+                        move[1] += scanner.nextInt();
+                        break;
+                    case "DOWN":
+                        move[1] -= scanner.nextInt();
+                        break;
+                    case "LEFT":
+                        move[0] -= scanner.nextInt();
+                        break;
+                    case "RIGHT":
+                        move[0] += scanner.nextInt();
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Invalid Direction");
+                }
+            }
+        }
+        catch (Exception e){
+            throw new IllegalArgumentException("Invalid Input");
+        }
+
+        if(move[0]+move[1] > maxMove){
+            throw new IllegalArgumentException("Move too large");
+        }
+
+        return move;
+    }
+
+    private void displayMoveHelp() {
+        System.out.println("Enter a move in the form of:");
+        System.out.println("UP/DOWN/LEFT/RIGHT <number>");
+        System.out.println("eg: UP 3 RIGHT 2");
+    }
 
     /**
      * Rolls dice and returns the result as array
@@ -268,11 +371,21 @@ public class Game
       }
     }
 
+    // Set player start position
+      // TODO: Choose actual start positions
+    players.get(0).setPosition(3,3);
+    players.get(1).setPosition(4,14);
+    players.get(2).setPosition(6,7);
+    if(playerNum>= 4) players.get(3).setPosition(12,6);
+
     //Turn order
     var playerMap = new HashMap<Integer, Player>();
     for(int p = 0; p < players.size(); p++){
       playerMap.put(p, players.get(p));
     }
+
+    board.BuildPeople(playerMap); // Build people on board
+
     return playerMap;
   }
 
