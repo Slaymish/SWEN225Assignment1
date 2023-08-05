@@ -223,12 +223,12 @@ public class Board
     }
 	
 
-private class EmptyCell implements Cell {
+    private class EmptyCell implements Cell {
 		public EmptyCell() {}
 		
 		@Override
 		public String getDisplayChar() {return "_";}
-   }
+    }
    
    private class Wall implements Cell {
 	    public Wall() {}

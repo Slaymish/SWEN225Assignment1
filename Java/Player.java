@@ -65,9 +65,8 @@ public class Player
 
   public String toString()
   {
-    return super.toString() + "["+
-            "name" + ":" + getName()+ "," +
-            "hasGuessed" + ":" + getHasGuessed()+ "]" + System.getProperties().getProperty("line.separator") +
-            "  " + "cards" + "=" + (getCards() != null ? !getCards().equals(this)  ? getCards().toString().replaceAll("  ","    ") : "this" : "null");
+    return this.name + System.getProperties().getProperty("line.separator") +
+            "  " + "Your Cards" + "=" + getCards().toString() + System.getProperties().getProperty("line.separator");
+
   }
 }

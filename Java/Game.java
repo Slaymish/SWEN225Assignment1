@@ -125,7 +125,9 @@ public class Game
     while(gameRunning){
 
       //Display board at start of turn
+        passOverDevice();
       DisplayBoard();
+
 
       DisplayTurnInfo();
       //Get a valid input
@@ -169,7 +171,23 @@ public class Game
     }
   }
 
-  private int getRandomNumber(int min,int max){
+    /**
+     * Gives player opportunity to pass over device
+     * (So no one sees other players cards)
+     */
+    private void passOverDevice() {
+        System.out.println("Pass over device to " + playerMap.get(currentPlayerTurn).getName());
+        System.out.println("Press enter to continue");
+        try {
+            InputStreamReader isr = new InputStreamReader(System.in);
+            BufferedReader br = new BufferedReader(isr);
+            String input = br.readLine();
+        } catch (IOException ioe) {
+            System.out.println("IO Exception raised With Move Input");
+        }
+    }
+
+    private int getRandomNumber(int min,int max){
     return (int) (Math.random() * (max - min) + min);
   }
 
@@ -254,7 +272,7 @@ public class Game
    * Displays who's turn it is
    */
   private void DisplayTurnInfo(){
-    System.out.println("It is " + playerMap.get(currentPlayerTurn).toString() + " Player: " + (currentPlayerTurn + 1) +"'s turn:");
+    System.out.println("Player " + (currentPlayerTurn + 1) +"'s turn: " + playerMap.get(currentPlayerTurn).toString());
   }
 
   /**
