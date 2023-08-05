@@ -25,12 +25,8 @@ public class Board
   // CONSTRUCTOR
   //------------------------
 
-  public Board(List<Estate> aEstateList)
+  public Board()
   {
-    cellData = new ArrayList<Cell>();
-    estateList = aEstateList;
-    cells = new ArrayList<Cell>();
-    estates = new ArrayList<Estate>();
   }
 
   //------------------------
