@@ -123,13 +123,12 @@ public class Game
 
     gameRunning = true;
     while(gameRunning){
-
-      //Display board at start of turn
         passOverDevice();
-      DisplayBoard();
 
+        //Display board at start of turn
+        DisplayBoard();
 
-      DisplayTurnInfo();
+        DisplayTurnInfo();
       //Get a valid input
       boolean validInput = false;
 
@@ -138,7 +137,8 @@ public class Game
         BufferedReader br = new BufferedReader(isr);
 
         //need to roll dice for max movement, display
-
+          int[] dice = rollDice();
+          System.out.println("You can move " + dice[2] + " cells");
         System.out.println("Where do you want to move?");
         String input =  input = br.readLine();
 
@@ -150,7 +150,6 @@ public class Game
 
         //validate input
         while(!CheckValidInput(input)) {
-
             if(input.equals("q") | input.equals("quit")){
                 System.out.println("Stopping Game");
                 return;
@@ -160,6 +159,7 @@ public class Game
           input = br.readLine();
         }
         //do move
+          // TODO: implement player movement
 
 
       }
@@ -170,6 +170,22 @@ public class Game
       NextPlayerTurn();
     }
   }
+
+    /**
+     * Rolls dice and returns the result as array
+     * [0] = dice 1
+     * [1] = dice 2
+     * [2] = total
+     * @return
+     */
+    private int[] rollDice() {
+        int[] dice = new int[3];
+        dice[0] = getRandomNumber(1,6);
+        dice[1] = getRandomNumber(1,6);
+        dice[2] = dice[0] + dice[1];
+        System.out.println("You rolled a " + dice[0] + " and a " + dice[1]);
+        return dice;
+    }
 
     /**
      * Gives player opportunity to pass over device

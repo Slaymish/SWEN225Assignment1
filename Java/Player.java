@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player
-{
+public class Player {
 
   //------------------------
   // MEMBER VARIABLES
@@ -12,6 +11,8 @@ public class Player
   private String name;
   private boolean hasGuessed = false;
   private List<Card> cards;
+
+  int[] position;
 
   //------------------------
   // CONSTRUCTOR
@@ -43,6 +44,14 @@ public class Player
     return wasSet;
   }
 
+  public boolean setPosition(int x, int y){
+    boolean wasSet = false;
+    position[0] = x;
+    position[1] = y;
+    wasSet = true;
+    return wasSet;
+  }
+
   public void addCard(Card card)
   {
     cards.add(card);
@@ -67,6 +76,15 @@ public class Player
   {
     return this.name + System.getProperties().getProperty("line.separator") +
             "  " + "Your Cards" + "=" + getCards().toString() + System.getProperties().getProperty("line.separator");
-
   }
+
+  public int[] getPosition(){
+    return position;
+  }
+
+    public void move(int x, int y){
+        position[0] += x;
+        position[1] += y;
+        //updatePositionOnBoard();
+    }
 }
