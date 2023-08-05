@@ -1,5 +1,6 @@
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 // line 93 "model.ump"
 // line 231 "model.ump"
@@ -135,11 +136,15 @@ public class Board
   // INTERFACE
   //------------------------
 
+    /**
+     * Convert playerMap to a map of Person objects and add them to the board
+     * @param playerMap
+     */
     public void BuildPeople(HashMap<Integer, Player> playerMap){
-        for (int i = 0; i < playerMap.size(); i++) {
-            Person p = new Person(playerMap.get(i).getName(), playerMap.get(i));
-            players.put(i, p);
-        }
+        players = playerMap.entrySet()
+                .stream()
+                .collect(Collectors.toMap(e -> e.getKey(), e -> new Person(e.getValue())));
+
         updatePeopleOnBoard();
     }
 
@@ -147,11 +152,10 @@ public class Board
      * Goes through list of players and updates their position on the board
      */
     public void updatePeopleOnBoard(){
-        for (int i = 0; i < players.size(); i++) {
-            Person p = players.get(i);
-            int[] pos = p.getPlayer().getPosition();
-            board[pos[0]][pos[1]] = p;
-        }
+       players.forEach((playerNum,person) -> {
+           board[person.getPrevX()][person.getPrevY()] = new EmptyCell(); // TODO change to previous cell
+           board[person.getX()][person.getY()] = person;
+       });
     }
   
   public void displayBoard() {
@@ -245,18 +249,21 @@ public class Board
 
     /**
      * Checks if the move is valid
-     * @param playerPos
-     * @param proposedOffset
+     * @param playerNum
+     * @param moveX
+     * @param moveY
      * @return
      */
-    public boolean isMoveValid(int[] playerPos, int[] proposedOffset) {
-        int[] newPos = new int[2];
-        newPos[0] = playerPos[0] + proposedOffset[0];
-        newPos[1] = playerPos[1] + proposedOffset[1];
-        if (newPos[0] < 0 || newPos[0] >= BoardHeight || newPos[1] < 0 || newPos[1] >= BoardWidth) {
+    public boolean isMoveValid(int playerNum, int moveX, int moveY){
+        Person player = players.get(playerNum);
+        int proposedX = player.getX() + moveX;
+        int proposedY = player.getY() + moveY;
+
+        if(proposedX < 0 || proposedX >= BoardHeight || proposedY < 0 || proposedY >= BoardWidth){
             return false;
         }
-        return board[newPos[0]][newPos[1]].isWalkable();
+
+        return board[proposedX][proposedY].isWalkable();
     }
 
 

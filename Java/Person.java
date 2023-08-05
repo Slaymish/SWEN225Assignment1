@@ -16,10 +16,10 @@ public class Person implements Cell {
   // CONSTRUCTOR
   //------------------------
 
-  public Person(String aName, Player player)
+  public Person(Player player)
   {
     super();
-    name = aName;
+    name = player.getName();
     this.player = player;
   }
 
@@ -49,5 +49,21 @@ public class Person implements Cell {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public int getX() {
+        return player.position[0];
+    }
+
+    public int getY() {
+        return player.position[1];
+    }
+
+    public int getPrevX() {
+        return player.prevPosition[0];
+    }
+
+    public int getPrevY() {
+        return player.prevPosition[1];
     }
 }

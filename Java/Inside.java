@@ -41,7 +41,6 @@ public class Inside implements Cell {
 
 @Override
 public String getDisplayChar() {
-	// TODO Auto-generated method stub
 	return "I";
 }
 

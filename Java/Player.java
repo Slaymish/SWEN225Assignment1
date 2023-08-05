@@ -13,6 +13,7 @@ public class Player {
   private List<Card> cards;
 
   int[] position = new int[2];
+  int[] prevPosition = new int[2];
 
   //------------------------
   // CONSTRUCTOR
@@ -44,10 +45,12 @@ public class Player {
     return wasSet;
   }
 
-  public boolean setPosition(int x, int y){
+  public boolean setPosition(int y, int x){
     boolean wasSet = false;
-    position[0] = x;
-    position[1] = y;
+    prevPosition[0] = position[0];
+    prevPosition[1] = position[1];
+    position[0] += y;
+    position[1] += x;
     wasSet = true;
     return wasSet;
   }
@@ -82,9 +85,14 @@ public class Player {
     return position;
   }
 
-    public void move(int[] moveOffset){
-        position[0] += moveOffset[0];
-        position[1] += moveOffset[1];
+
+  /**
+   * Moves the player by the given offset
+   * @param moveOffset
+   */
+  public void move(int[] moveOffset){
+        position[0] -= moveOffset[0];
+        position[1] -= moveOffset[1];
         //updatePositionOnBoard();
     }
 }

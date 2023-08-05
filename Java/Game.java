@@ -161,16 +161,17 @@ public class Game
                 displayMoveHelp();
             }
 
-            if (!board.isMoveValid(playerMap.get(currentPlayerTurn).getPosition(), move)) { // if move is not possible
-                System.out.println("Invalid Move, try again");
-                displayMoveHelp();
+            if (!board.isMoveValid(currentPlayerTurn, move[0], move[1])) {
+                System.out.println("Cannot move there, try again");
                 validInput = false;
             }
         }
 
         // move player
         // TODO: implement move player
-          System.out.println("Moving player " + currentPlayerTurn + "by  (" + move[0] + "," + move[1] + ")");
+        System.out.println("Moving player " + currentPlayerTurn + " by (" + move[0] + "," + move[1] + ")");
+        playerMap.get(currentPlayerTurn).setPosition(move[0], move[1]);
+        board.updatePeopleOnBoard();
 
 
 
@@ -234,17 +235,19 @@ public class Game
      * @return
      */
     private int[] parseInput(String input, int maxMove) {
+        // TODO : RIGHT AND DOWN ARE SWITCHED ?
         int[] move = new int[2];
         Scanner scanner = new Scanner(input);
+        System.out.println(input);
         try {
             while (scanner.hasNext()) {
                 String direction = scanner.next();
                 switch (direction) {
                     case "UP":
-                        move[1] += scanner.nextInt();
+                        move[1] -= scanner.nextInt();
                         break;
                     case "DOWN":
-                        move[1] -= scanner.nextInt();
+                        move[1] += scanner.nextInt();
                         break;
                     case "LEFT":
                         move[0] -= scanner.nextInt();
@@ -253,12 +256,13 @@ public class Game
                         move[0] += scanner.nextInt();
                         break;
                     default:
+                        System.out.println("Invalid Direction");
                         throw new IllegalArgumentException("Invalid Direction");
                 }
             }
         }
-        catch (Exception e){
-            throw new IllegalArgumentException("Invalid Input");
+        catch (InputMismatchException ime){
+            throw new IllegalArgumentException("Mismatched input");
         }
 
         if(move[0]+move[1] > maxMove){
@@ -372,11 +376,10 @@ public class Game
     }
 
     // Set player start position
-      // TODO: Choose actual start positions
-    players.get(0).setPosition(3,3);
-    players.get(1).setPosition(4,14);
-    players.get(2).setPosition(6,7);
-    if(playerNum>= 4) players.get(3).setPosition(12,6);
+    players.get(0).setPosition(1,11); // Lucilla
+    players.get(1).setPosition(9,1); // Bert
+    players.get(2).setPosition(22,9); // Malina
+    if(playerNum>= 4) players.get(3).setPosition(14,22); // Percy
 
     //Turn order
     var playerMap = new HashMap<Integer, Player>();
