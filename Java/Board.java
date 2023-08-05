@@ -11,13 +11,20 @@ public class Board
   //------------------------
   
   private List<Estate> estateList = new ArrayList<Estate>();
+
+    //Board Attributes
+    private List<Cell> cellData;
+
+    //Board Associations
+    private List<Cell> cells;
+    private List<Estate> estates;
 	
   //The map is a 24x24 grid
-  final int BoardHeight = 24;
-  final int BoardWidth = 24;
+    final int BoardHeight = 24;
+    final int BoardWidth = 24;
   
   //2D array of Cell objects representing the board
-  private Cell[][] board;
+    private Cell[][] board;
 
   //------------------------
   // CONSTRUCTOR
@@ -26,7 +33,7 @@ public class Board
   public Board()
   { 	
 	  board = new Cell[BoardHeight][BoardWidth];
-    initializeBoard();
+      initializeBoard();
   }
 
   //------------------------

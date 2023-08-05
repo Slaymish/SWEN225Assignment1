@@ -63,10 +63,6 @@ public class Player
     return cards;
   }
 
-  public void delete()
-  {}
-
-
   public String toString()
   {
     return super.toString() + "["+

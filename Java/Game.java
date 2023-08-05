@@ -247,8 +247,8 @@ public class Game
    * Gets and displays the board to the screen
    */
    private void DisplayBoard(){
-    System.out.println(board.toString());
-  }
+       this.board.displayBoard();
+   }
 
   /**
    * Displays who's turn it is
@@ -270,11 +270,7 @@ public class Game
    * Checks input is valid
    */
   private boolean CheckValidInput(String input){
-
-
      if(input.equals("T")) return true;
-
-
     return false;
   }
 
