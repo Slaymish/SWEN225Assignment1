@@ -1,6 +1,5 @@
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
@@ -149,12 +148,12 @@ public class Game {
                         move = parseInput(input, dice[2]);
                         validInput = true;
                     } catch (IllegalArgumentException iae) { // If error in parsing
-                        System.out.println("Invalid Move, try again");
+                        System.out.println(ConsoleCommands.RED + "Invalid Move, try again" + ConsoleCommands.RESET);
                         displayMoveHelp();
                     }
 
                     if (!board.isMoveValid(currentPlayerTurn, move[0], move[1])) {
-                        System.out.println("You can't move there! try again");
+                        System.out.println(ConsoleCommands.RED + "You can't move there! try again" + ConsoleCommands.RESET);
                         validInput = false;
                     }
                 }
@@ -166,8 +165,11 @@ public class Game {
                 board.updatePeopleOnBoard(); 
 
                 if (currentPlayerInEstate()) {
-                    System.out.println("You are in an estate");
-                    handleAttempt();
+                    Estate estate = getBoard().getEstateList().stream()
+                            .filter(e -> e.playerIsInside(getCurrentPlayer().getPosition()[0], getCurrentPlayer().getPosition()[1]))
+                            .findAny().get();
+                    System.out.println("You are in " + ConsoleCommands.inBlue(estate.name));
+                    handleAttempt(estate);
                 }
             } catch (IOException ioe) {
                 System.out.println("IO Exception raised With Move Input");
@@ -187,35 +189,13 @@ public class Game {
         int[] currentPlayerPosition = currentPlayer.getPosition();
         int x = currentPlayerPosition[0];
         int y = currentPlayerPosition[1];
-        
-        // TODO fix these some are bugged
-        
-        //haunted house 2, 2, 6, 6
-        if(x>=2 && y>=2 && x<=6 && y<=6) {
-            return true;
-        }
-        
-        //manic manor 17, 2, 21, 2
-        if(x>=17 && y>=2 && x<=21 && y<=2) {
-            return true;
-        }
-        
-        //calamity castle 2, 17, 2, 21
-        if(x>=2 && y>=17 && x<=2 && y<=21) {
-            return true;
-        }
-        
-        //peril palace 17, 17, 21, 21
-        if(x>=17 && y>=17 && x<=21 && y<=21) {
-            return true;
-        }
-        
-        //visitation villa 9, 10, 14, 13
-        if(x>=0 && y>=10 && x<=14 && y<=13) {
-            return true;
-        }
-        
-        return false;
+        // for each estate
+        // playerIsInside()
+        Optional<Estate> estateOptional = getBoard().getEstateList().stream()
+                .filter(estate -> estate.playerIsInside(x, y))
+                .findAny();
+
+        return estateOptional.isPresent();
     }
 
     /**
@@ -224,7 +204,7 @@ public class Game {
      *
      * @throws IOException
      */
-    private void handleAttempt() throws IOException {
+    private void handleAttempt(Estate estate) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Do you want to guess or solve?");
         boolean validInput = false;
@@ -248,7 +228,7 @@ public class Game {
         }
         
         if(guessOrSolve.equals("GUESS")) {
-            guess();
+            guess(estate);
         } else if(guessOrSolve.equals("SOLVE")) {
             solve();
         }
@@ -258,14 +238,14 @@ public class Game {
      * handles guess attempts
      */
     
-    private void guess() throws IOException {
+    private void guess(Estate estate) throws IOException {
         Player currentPlayer = getCurrentPlayer();
         List<String> weapons = getWeapons();
         List<String> characters = getCharacters();
         
-        System.out.println("Weapons: " + weapons);
-        System.out.println("Characters: " + characters);
-        System.out.println("Select a weapon for your guess");
+        System.out.println("Weapons: " + ConsoleCommands.RED + weapons + ConsoleCommands.RESET);
+        System.out.println("Characters: " + ConsoleCommands.CYAN + characters + ConsoleCommands.RESET);
+        System.out.println("Select a " + ConsoleCommands.inRed("weapon") + " for your guess");
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         boolean validInput = false; 
@@ -281,9 +261,10 @@ public class Game {
             }
             
             for(String s : weapons) {
-                if(input.equals(s)) {
+                if (input.equals(s)) {
                     validInput = true;
                     weapon = input;
+                    break;
                 }
             }
             
@@ -292,7 +273,7 @@ public class Game {
             }
         }
         
-        System.out.println("Select a character for your guess");
+        System.out.println("Select a " + ConsoleCommands.inCyan("character") + " for your guess");
         validInput = false;
         String character = "";
         while(!validInput) {
@@ -305,9 +286,10 @@ public class Game {
             }
             
             for(String s : characters) {
-                if(input.equals(s)) {
+                if (input.equals(s)) {
                     validInput = true;
                     character = input;
+                    break;
                 }
             }
             
@@ -315,8 +297,9 @@ public class Game {
                 System.out.println("Enter valid character");
             }
         }
-        
-        System.out.println("Your guess is: " + character + " killed using " + weapon + " in this room");
+
+        Murderer murderGuess = new Murderer(getCardByName(weapon),getCardByName(estate.name),getCardByName(character));
+        System.out.println("Your guess is: " + murderGuess.ToString());
         
         //TODO implement refutations
     }
@@ -364,7 +347,7 @@ public class Game {
      * @return
      */
     private int[] parseInput(String input, int maxMove) {
-        // TODO : RIGHT AND DOWN ARE SWITCHED ??? somethings up at least
+        // TODO : add some tests for this
         int[] move = new int[2];
         Scanner scanner = new Scanner(input);
         System.out.println(input);
@@ -428,6 +411,7 @@ public class Game {
      * (So no one sees other players cards)
      */
     private void passOverDevice() {
+        ConsoleCommands.clearScreen();
         System.out.println("Pass over device to " + playerMap.get(currentPlayerTurn).getName());
         System.out.println("Press enter to continue");
         try {
@@ -437,6 +421,7 @@ public class Game {
         } catch (IOException ioe) {
             System.out.println("IO Exception raised With Move Input");
         }
+        ConsoleCommands.clearScreen();
     }
 
     private int getRandomNumber(int min, int max) {
@@ -535,7 +520,8 @@ public class Game {
      * Displays who's turn it is
      */
     private void DisplayTurnInfo() {
-        System.out.println("Player " + (currentPlayerTurn + 1) + "'s turn: " + playerMap.get(currentPlayerTurn).toString());
+        System.out.println("Player " + (currentPlayerTurn + 1) + "'s turn: " +
+               getCurrentPlayer().toString());
     }
 
     /**
@@ -545,13 +531,6 @@ public class Game {
         System.out.println("End turn");
         currentPlayerTurn++;
         if (currentPlayerTurn >= playerNum) currentPlayerTurn = 0;
-    }
-
-    /**
-     * Checks input is valid
-     */
-    private boolean CheckValidInput(String input) {
-        return input.equals("T");
     }
 
     /**
@@ -570,5 +549,57 @@ public class Game {
      */
     public Player getCurrentPlayer() {
         return playerMap.get(currentPlayerTurn);
+    }
+}
+
+class ConsoleCommands {
+    public static final String BLACK = "\033[0;30m";   // BLACK
+    public static final String RED = "\033[0;31m";     // RED
+    public static final String GREEN = "\033[0;32m";   // GREEN
+    public static final String YELLOW = "\033[0;33m";  // YELLOW
+    public static final String BLUE = "\033[0;34m";    // BLUE
+    public static final String PURPLE = "\033[0;35m";  // PURPLE
+    public static final String CYAN = "\033[0;36m";    // CYAN
+    public static final String WHITE = "\033[0;37m";   // WHITE
+    public static final String RESET = "\033[0m";  // Text Reset
+
+    // Bold
+    public static final String BLACK_BOLD = "\033[1;30m";  // BLACK
+    public static final String RED_BOLD = "\033[1;31m";    // RED
+    public static final String GREEN_BOLD = "\033[1;32m";  // GREEN
+    public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
+    public static final String BLUE_BOLD = "\033[1;34m";   // BLUE
+    public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
+    public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
+    public static final String WHITE_BOLD = "\033[1;37m";  // WHITE
+
+    public static String inYellow(String text){
+        return YELLOW_BOLD + text + RESET;
+    }
+
+    public static String inRed(String text){
+        return RED + text + RESET;
+    }
+
+    public static String inGreen(String text){
+        return GREEN + text + RESET;
+    }
+
+    public static String inBlue(String text){
+        return BLUE + text + RESET;
+    }
+
+    public static String inPurple(String text){
+        return PURPLE + text + RESET;
+    }
+
+    public static String inCyan(String text){
+        return CYAN + text + RESET;
+    }
+
+    public static void clearScreen() {
+        System.out.println(System.lineSeparator().repeat(50));
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }

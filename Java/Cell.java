@@ -13,9 +13,6 @@ interface Cell
   default void delete()
   {}
 
-
-
-  
   //------------------------
   // DEVELOPER CODE - PROVIDED AS-IS
   //------------------------

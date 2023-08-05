@@ -151,8 +151,7 @@ public class Door implements Cell {
 
 @Override
 public String getDisplayChar() {
-	// TODO Auto-generated method stub
-	return "D";
+    return ConsoleCommands.inPurple("D");
 }
 
 }

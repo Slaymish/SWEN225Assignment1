@@ -15,6 +15,7 @@ public class Murderer
     this.estate = _estate;
     this.person = _person;
   }
+
   /**
    * Returns if the given cards are the murder ones
    */
@@ -35,6 +36,6 @@ public class Murderer
    * Formatted display output
    */
   public String ToString(){
-    return "The Murderer was " + person.getCardName() + " in the " + estate.getCardName() + " with the " + weapon.getCardName();
+    return person.getCardName() + "killed in the " + estate.getCardName() + " with the " + weapon.getCardName();
   }
 }
