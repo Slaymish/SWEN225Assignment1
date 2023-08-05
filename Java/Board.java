@@ -27,7 +27,7 @@ public class Board
     final int BoardWidth = 24;
   
   //2D array of Cell objects representing the board
-    private Cell[][] board;
+    private final Cell[][] board; // [y][x]
 
   //------------------------
   // CONSTRUCTOR
@@ -153,27 +153,29 @@ public class Board
      */
     public void updatePeopleOnBoard(){
        players.forEach((playerNum,person) -> {
-           board[person.getPrevX()][person.getPrevY()] = new EmptyCell(); // TODO change to previous cell
-           board[person.getX()][person.getY()] = person;
+           board[person.getPrevY()][person.getPrevX()] = new EmptyCell(); // TODO change to previous cell (not just empty)
+           board[person.getY()][person.getX()] = person;
        });
     }
   
-  public void displayBoard() {
+  public String displayBoard() {
+    StringBuilder sb = new StringBuilder();
 	  for (int i = 0; i < BoardHeight; i++) {
           for (int j = 0; j < BoardWidth; j++) {
-              System.out.print(board[i][j].getDisplayChar()+"|");
+                sb.append(board[i][j].getDisplayChar()+"|");
           }
-          System.out.println();
+          sb.append("\n");
       }
 	  
 	  //table of symbols
-	  System.out.println("\nGLOSSARY OF SYMBOLS:"
+	  sb.append("\nGLOSSARY OF SYMBOLS:"
 	  		+ "\n| W = WALL           |"
 	  		+ "\n| I = ESTATE WALL    |"
 	  		+ "\n| P = PERSON         |"
 	  		+ "\n| D = DOOR OF ESTATE |");
 
-	  System.out.println("\nBOARD DISPLAYED.");
+        System.out.println(sb);
+        return sb.toString();
   }
 	  
 	private void BuildWalls() {

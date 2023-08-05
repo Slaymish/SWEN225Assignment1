@@ -10,7 +10,7 @@ interface Cell
   // INTERFACE
   //------------------------
 
-  public default void delete()
+  default void delete()
   {}
 
 

@@ -9,8 +9,8 @@ public class Person implements Cell {
   //------------------------
   // MEMBER VARIABLES
   //------------------------
-    private String name;
-    private Player player;
+    private final String name;
+    private final Player player;
 
   //------------------------
   // CONSTRUCTOR

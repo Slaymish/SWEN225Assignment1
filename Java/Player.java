@@ -8,12 +8,12 @@ public class Player {
   //------------------------
 
   //Player Attributes
-  private String name;
+  private final String name;
   private boolean hasGuessed = false;
   private List<Card> cards;
 
-  int[] position = new int[2];
-  int[] prevPosition = new int[2];
+  int[] position = new int[2]; // x,y
+  int[] prevPosition = new int[2]; // x,y
 
   //------------------------
   // CONSTRUCTOR
@@ -45,12 +45,22 @@ public class Player {
     return wasSet;
   }
 
-  public boolean setPosition(int y, int x){
+  public boolean setPositionWithOffset(int x, int y){
     boolean wasSet = false;
     prevPosition[0] = position[0];
     prevPosition[1] = position[1];
-    position[0] += y;
-    position[1] += x;
+    position[0] += x;
+    position[1] += y;
+    wasSet = true;
+    return wasSet;
+  }
+
+  public boolean setPosition(int x, int y){
+    boolean wasSet = false;
+    prevPosition[0] = position[0];
+    prevPosition[1] = position[1];
+    position[0] = x;
+    position[1] = y;
     wasSet = true;
     return wasSet;
   }
@@ -84,15 +94,4 @@ public class Player {
   public int[] getPosition(){
     return position;
   }
-
-
-  /**
-   * Moves the player by the given offset
-   * @param moveOffset
-   */
-  public void move(int[] moveOffset){
-        position[0] -= moveOffset[0];
-        position[1] -= moveOffset[1];
-        //updatePositionOnBoard();
-    }
 }

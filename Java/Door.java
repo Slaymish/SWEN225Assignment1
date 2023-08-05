@@ -15,7 +15,7 @@ public class Door implements Cell {
   private Estate estate;
 
   //Door Associations
-  private List<Estate> estates;
+  private final List<Estate> estates;
 
   //------------------------
   // CONSTRUCTOR

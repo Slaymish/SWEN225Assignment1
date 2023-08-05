@@ -1,9 +1,9 @@
 import java.util.*;
 public class Murderer
 {
-  private Card weapon ;
-  private Card estate ;
-  private Card person ;
+  private final Card weapon ;
+  private final Card estate ;
+  private final Card person ;
 
   //------------------------
   // CONSTRUCTOR
@@ -20,6 +20,14 @@ public class Murderer
    */
   public boolean checkMurderer(Card _weapon, Card _estate, Card _person){
     return this.weapon.equals(_weapon)  && this.estate.equals(_estate) && this.person.equals(_person);
+  }
+
+  /**
+   * Get the murder cards
+   * @return
+   */
+  public Collection<Card> getCards(){
+    return List.of(weapon,estate,person);
   }
 
 

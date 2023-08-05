@@ -8,7 +8,7 @@ public class Card
   //Card Attributes
   enum CardType{Character, Weapon, Estate}
   CardType cardType;
-  private String cardName;
+  private final String cardName;
 
   //------------------------
   // CONSTRUCTOR
