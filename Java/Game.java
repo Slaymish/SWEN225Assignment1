@@ -127,7 +127,7 @@ public class Game {
             try {
                 InputStreamReader isr = new InputStreamReader(System.in);
                 BufferedReader br = new BufferedReader(isr);
-
+                
                 int[] dice = rollDice();
                 System.out.println("You can move " + dice[2] + " cells");
                 System.out.println("Where do you want to move?");
@@ -160,10 +160,10 @@ public class Game {
                 }
 
                 // move player
-                // TODO: implement move player
+                // TODO : let player move into doors
                 System.out.println("Moving player " + currentPlayerTurn + " by (x=" + move[0] + ",y=" + move[1] + ")");
                 playerMap.get(currentPlayerTurn).setPositionWithOffset(move[0], move[1]);
-                board.updatePeopleOnBoard(); // Update board with new player positions
+                board.updatePeopleOnBoard(); 
 
                 if (currentPlayerInEstate()) {
                     System.out.println("You are in an estate");
@@ -183,8 +183,39 @@ public class Game {
      * @return
      */
     private boolean currentPlayerInEstate() {
+        Player currentPlayer = playerMap.get(currentPlayerTurn);
+        int[] currentPlayerPosition = currentPlayer.getPosition();
+        int x = currentPlayerPosition[0];
+        int y = currentPlayerPosition[1];
+        
+        // TODO fix these some are bugged
+        
+        //haunted house 2, 2, 6, 6
+        if(x>=2 && y>=2 && x<=6 && y<=6) {
+            return true;
+        }
+        
+        //manic manor 17, 2, 21, 2
+        if(x>=17 && y>=2 && x<=21 && y<=2) {
+            return true;
+        }
+        
+        //calamity castle 2, 17, 2, 21
+        if(x>=2 && y>=17 && x<=2 && y<=21) {
+            return true;
+        }
+        
+        //peril palace 17, 17, 21, 21
+        if(x>=17 && y>=17 && x<=21 && y<=21) {
+            return true;
+        }
+        
+        //visitation villa 9, 10, 14, 13
+        if(x>=0 && y>=10 && x<=14 && y<=13) {
+            return true;
+        }
+        
         return false;
-        // TODO: Find out if player is in an estate
     }
 
     /**
@@ -198,6 +229,7 @@ public class Game {
         System.out.println("Do you want to guess or solve?");
         boolean validInput = false;
         String input;
+        String guessOrSolve = "";
         while (!validInput) {
             input = br.readLine();
             input = input.toUpperCase(); // Makes parsing easier
@@ -209,11 +241,117 @@ public class Game {
 
             if (input.equals("GUESS") | input.equals("SOLVE")) {
                 validInput = true;
+                guessOrSolve = input;
             } else {
                 System.out.println("Invalid input, try again");
             }
         }
-        // TODO implement guess/solve
+        
+        if(guessOrSolve.equals("GUESS")) {
+            guess();
+        } else if(guessOrSolve.equals("SOLVE")) {
+            solve();
+        }
+    }
+    
+    /**
+     * handles guess attempts
+     */
+    
+    private void guess() throws IOException {
+        Player currentPlayer = getCurrentPlayer();
+        List<String> weapons = getWeapons();
+        List<String> characters = getCharacters();
+        
+        System.out.println("Weapons: " + weapons);
+        System.out.println("Characters: " + characters);
+        System.out.println("Select a weapon for your guess");
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        boolean validInput = false; 
+        String input;
+        String weapon = "";
+        while(!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+            
+            if (input.equals("Q") | input.equals("QUIT")) {
+                System.out.println("Stopping Game");
+                return;
+            }
+            
+            for(String s : weapons) {
+                if(input.equals(s)) {
+                    validInput = true;
+                    weapon = input;
+                }
+            }
+            
+            if(!validInput) {
+                System.out.println("Enter valid weapon");
+            }
+        }
+        
+        System.out.println("Select a character for your guess");
+        validInput = false;
+        String character = "";
+        while(!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+            
+            if (input.equals("Q") | input.equals("QUIT")) {
+                System.out.println("Stopping Game");
+                return;
+            }
+            
+            for(String s : characters) {
+                if(input.equals(s)) {
+                    validInput = true;
+                    character = input;
+                }
+            }
+            
+            if(!validInput) {
+                System.out.println("Enter valid character");
+            }
+        }
+        
+        System.out.println("Your guess is: " + character + " killed using " + weapon + " in this room");
+        
+        //TODO implement refutations
+    }
+    
+    /**
+     * handles solve attempts
+     */
+    private void solve() {
+        //TODO implement solve attempt
+    }
+    
+    /**
+     * gets list of weapon cards
+     */
+    private List<String> getWeapons() {
+        List<String> weapons = new ArrayList<String>();
+        for(Card c : allCards) {
+            if(c.getCardType() == Card.CardType.Weapon) {
+                weapons.add(c.getCardName().toUpperCase());
+            }
+        }
+        return weapons;
+    }
+    
+    /**
+     * gets list of character cards
+     */
+    private List<String> getCharacters() {
+        List<String> characters = new ArrayList<String>();
+        for(Card c : allCards) {
+            if(c.getCardType() == Card.CardType.Character) {
+                characters.add(c.getCardName().toUpperCase());
+            }
+        }
+        return characters;
     }
 
     /**
@@ -426,5 +564,11 @@ public class Game {
         }
         return null;
     }
-
+    
+    /**
+     * gets current player
+     */
+    public Player getCurrentPlayer() {
+        return playerMap.get(currentPlayerTurn);
+    }
 }
