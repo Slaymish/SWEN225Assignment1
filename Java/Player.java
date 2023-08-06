@@ -87,7 +87,7 @@ public class Player {
 
   public String toString()
   {
-    return this.name + System.getProperties().getProperty("line.separator") +
+    return ConsoleCommands.inYellow(this.name) + System.getProperties().getProperty("line.separator") +
             "  " + "Your Cards" + "=" + getCards().toString() + System.getProperties().getProperty("line.separator");
   }
 

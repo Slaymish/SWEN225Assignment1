@@ -73,6 +73,50 @@ public class GameTests {
                 | I = ESTATE WALL    |
                 | P = PERSON         |
                 | D = DOOR OF ESTATE |"""; // This is the board that should be displayed
+
+        assertEquals(board, shouldBe);
+    }
+
+    @Test
+    public void testValidPlayerMovement(){
+        // Tests is player movement gets displayed correctly on board
+       Player p1 = game.getPlayerMap().get(0); // get luccila
+        p1.setPositionWithOffset(4, 3); // RIGHT 4 DOWN 3
+        game.getBoard().updatePeopleOnBoard();
+        String board = game.getBoard().displayBoard();
+
+        String shouldBe = """
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|I|I|I|I|I|_|_|_|_|_|_|_|_|_|_|I|I|I|I|I|_|_|
+                _|_|I|I|I|I|D|_|_|_|_|_|_|_|_|_|_|I|I|I|I|I|_|_|
+                _|_|I|I|I|I|I|_|_|_|_|_|_|_|_|L|_|I|I|I|I|I|_|_|
+                _|_|I|I|I|I|I|_|_|_|_|W|W|_|_|_|_|D|I|I|I|I|_|_|
+                _|_|I|I|I|D|I|_|_|_|_|W|W|_|_|_|_|I|I|I|D|I|_|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|B|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|I|I|I|D|I|I|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|W|W|_|_|I|I|I|I|I|D|_|_|W|W|_|_|_|_|_|
+                _|_|_|_|_|W|W|_|_|D|I|I|I|I|I|_|_|W|W|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|I|I|D|I|I|I|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|P|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|I|D|I|I|I|_|_|_|_|W|W|_|_|_|_|I|D|I|I|I|_|_|
+                _|_|I|I|I|I|D|_|_|_|_|W|W|_|_|_|_|I|I|I|I|I|_|_|
+                _|_|I|I|I|I|I|_|_|_|_|_|_|_|_|_|_|I|I|I|I|I|_|_|
+                _|_|I|I|I|I|I|_|_|_|_|_|_|_|_|_|_|D|I|I|I|I|_|_|
+                _|_|I|I|I|I|I|_|_|_|_|_|_|_|_|_|_|I|I|I|I|I|_|_|
+                _|_|_|_|_|_|_|_|_|M|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                _|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
+                                
+                GLOSSARY OF SYMBOLS:
+                | W = WALL           |
+                | I = ESTATE WALL    |
+                | P = PERSON         |
+                | D = DOOR OF ESTATE |"""; // This is the board that should be displayed
+
         assertEquals(board, shouldBe);
     }
 }
