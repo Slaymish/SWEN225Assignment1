@@ -50,16 +50,6 @@ public class Estate {
         return wasSet;
     }
 
-  /*
-  public boolean setWeapon(Weapon aWeapon)
-  {
-    boolean wasSet = false;
-    weapon = aWeapon;
-    wasSet = true;
-    return wasSet;
-  }
-
-   */
 
     /**
      * Sets the origin of the estate
@@ -102,36 +92,6 @@ public class Estate {
   }
 
    */
-
-    public void delete() {
-    }
-
-
-    /**
-     * Adds a person to the players in the estate
-     */
-    // line 123 "model.ump"
-    public void addPerson(Person person) {
-
-    }
-
-
-    /**
-     * Removes a person to the players in the estate
-     */
-    // line 130 "model.ump"
-    public boolean removePerson(Person person) {
-        return false;
-    }
-
-
-    /**
-     * Sets Weapon
-     */
-    // line 137 "model.ump"
-    public void setWeapon(Person person) {
-
-    }
 
     // line 141 "model.ump"
     public String toString() {

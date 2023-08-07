@@ -35,7 +35,7 @@ public class Murderer
   /**
    * Formatted display output
    */
-  public String ToString(){
-    return person.getCardName() + "killed in the " + estate.getCardName() + " with the " + weapon.getCardName();
+  public String toString(){
+    return person.getCardName() + " killed in the " + estate.getCardName() + " with the " + weapon.getCardName();
   }
 }

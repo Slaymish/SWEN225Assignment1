@@ -186,7 +186,7 @@ public class Board {
      * @param moveY
      * @return
      */
-    public boolean isMoveValid(int playerNum, int moveX, int moveY) {
+    public boolean isMoveValid(int playerNum, int moveX, int moveY) throws Door.DoorEnteredEvent {
         Person player = players.get(playerNum);
         int proposedX = player.getX() + moveX;
         int proposedY = player.getY() + moveY;
@@ -195,7 +195,14 @@ public class Board {
             return false;
         }
 
-        return board[proposedX][proposedY].isWalkable();
+        // Check if cell is a door
+        if(board[proposedY][proposedX] instanceof Door){
+            Door door = (Door) board[proposedY][proposedX];
+            //throw door event
+            throw new Door.DoorEnteredEvent(door.getEstate());
+        }
+        //flipped Y and X to accommodate row and col in other methods.
+        return board[proposedY][proposedX].isWalkable();
     }
 
 

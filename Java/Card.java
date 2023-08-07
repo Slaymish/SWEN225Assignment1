@@ -38,8 +38,9 @@ public class Card
    * Returns if cards are equal
    */
    public boolean equals(Card other){
-     return (this.getCardType() == other.getCardType())
-             && this.getCardName().equals( other.getCardName() );
+     if(other==null)throw new NullPointerException("The other card is null");
+
+     return this.cardName.equals(other.cardName);
    }
 
 
