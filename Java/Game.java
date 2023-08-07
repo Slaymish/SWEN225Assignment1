@@ -77,9 +77,11 @@ public class Game {
         allCards.addAll(characterCards);
         allCards.addAll(estateCards);
         Collections.shuffle(allCards);
+
+        SetupPlayers();
     }
 
-    public void setupPlayers() {
+    public void SetupPlayers() {
         //Get player count
         System.out.println("How Many Players, (3 or 4)?");
 
@@ -104,11 +106,6 @@ public class Game {
 
         //re add the murder cards to the deck
         allCards.addAll(murderer.getCards());
-
-        //remove the 4th player from the deck if only 3 players
-        if(playerNum == 3) {
-            allCards.remove(getCardByName("Percy"));
-        }
     }
 
     /**
@@ -147,6 +144,10 @@ public class Game {
                     if (input.equals("Q") | input.equals("QUIT")) {
                         System.out.println("Stopping Game");
                         return;
+                    }
+                    // TODO : Remove this before release
+                    if(input.equals("MURDER")){
+                        System.out.println("The murder is: " + murderer.toString());
                     }
 
                     try {
@@ -530,12 +531,25 @@ public class Game {
         //Only handling 3 or 4 players case
 
         var players = new ArrayList<Player>();
-        players.add(new Player("Lucilla"));
-        players.add(new Player("Bert"));
-        players.add(new Player("Malina"));
 
-        //only adds player if needed
-        if (playerNum >= 4) players.add(new Player("Percy"));
+        Player Lucillia = (new Player("Lucilla"));
+        Lucillia.setPosition(11, 1);
+        players.add(Lucillia);
+
+        Player Bert = (new Player("Bert"));
+        Bert.setPosition(1, 9);
+        players.add(Bert);
+
+        Player Malina = (new Player("Malina"));
+        Malina.setPosition(9, 22);
+        players.add(Malina);
+
+        Player Percy = (new Player("Percy"));
+        Percy.setPosition(22,14);
+        players.add(Percy);
+
+        //Remove Player if only 3
+        if(playerNum==3)players.remove(3);
 
         //Goes through every card
         int i = 0;
@@ -548,16 +562,21 @@ public class Game {
             }
         }
 
-        // Set player start position
-        players.get(0).setPosition(11, 1); // Lucilla
-        players.get(1).setPosition(1, 9); // Bert
-        players.get(2).setPosition(9, 22); // Malina
-        if (playerNum >= 4) players.get(3).setPosition(22,14); // Percy
-
         //Turn order
         var playerMap = new HashMap<Integer, Player>();
-        for (int p = 0; p < players.size(); p++) {
-            playerMap.put(p, players.get(p));
+        //for (int p = 0; p < players.size(); p++) {
+        //   playerMap.put(p, players.get(p));
+        //}
+
+        int numAdded = 0;
+        int it = getRandomNumber(0,3);
+        while (numAdded < playerNum){
+            if(it == playerNum){
+                it = 0;
+            }
+            playerMap.put(numAdded, players.get(it));
+            it++;
+            numAdded++;
         }
 
         board.BuildPeople(playerMap); // Build people on board

@@ -36,8 +36,10 @@ public class GameTests {
     public void initGame() { // Start a new game
         game = new Game();
         game.Setup();
-        provideInput("4\n");
-        game.setupPlayers();
+        ConsoleCommands.useColour = false; // stop use colour
+        provideInput("4\n"); // 4 players
+        game.SetupPlayers();
+        System.out.println("Game started"); // FIXME - Can't get tests to get past here
     }
 
 
