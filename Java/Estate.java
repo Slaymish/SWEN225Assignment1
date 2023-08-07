@@ -1,19 +1,12 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-// line 113 "model.ump"
-// line 239 "model.ump"
 public class Estate {
 
     //------------------------
     // MEMBER VARIABLES
     //------------------------
-
-    //Estate Attributes
     public String name;
     private List<Inside> estateCells;
     private Set<Person> playersInEstate;
@@ -21,20 +14,13 @@ public class Estate {
     private final int[] origin = new int[2]; // row, col
     private final int[] widthHeight = new int[2]; // width, height
 
-    //private Weapon weapon;
-
     //------------------------
     // CONSTRUCTOR
     //------------------------
-
     public Estate(String name) {
         this.name = name;
         estateCells = new ArrayList<Inside>();
     }
-
-    //------------------------
-    // INTERFACE
-    //------------------------
 
     public boolean setEstateCells(List<Inside> aEstateCells) {
         boolean wasSet = false;
@@ -84,14 +70,6 @@ public class Estate {
     public Set<Person> getPlayersInEstate() {
         return playersInEstate;
     }
-
-  /*
-  public Weapon getWeapon()
-  {
-    return weapon;
-  }
-
-   */
 
     // line 141 "model.ump"
     public String toString() {
