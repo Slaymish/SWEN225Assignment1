@@ -216,6 +216,7 @@ public class Game {
      * @throws IOException
      */
     private void handleAttempt(Estate estate) throws IOException {
+        // get input from user
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Do you want to guess or solve?");
         boolean validInput = false;
@@ -225,11 +226,13 @@ public class Game {
             input = br.readLine();
             input = input.toUpperCase(); // Makes parsing easier
 
+            // quit
             if (input.equals("Q") | input.equals("QUIT")) {
                 System.out.println("Stopping Game");
                 return;
             }
 
+            // guess/solve
             if (input.equals("GUESS") | input.equals("SOLVE")) {
                 validInput = true;
                 guessOrSolve = input;
@@ -237,7 +240,7 @@ public class Game {
                 System.out.println("Invalid input, try again");
             }
         }
-        
+
         if(guessOrSolve.equals("GUESS")) {
             guess(estate);
         } else if(guessOrSolve.equals("SOLVE")) {
@@ -248,16 +251,16 @@ public class Game {
     /**
      * handles guess attempts
      */
-
     private void guess(Estate estate) throws IOException {
+        // print weapons and characters for guess
         Player currentPlayer = getCurrentPlayer();
         List<String> weapons = getWeapons();
         List<String> characters = getCharacters();
-
         System.out.println("Weapons: " + ConsoleCommands.RED + weapons + ConsoleCommands.RESET);
         System.out.println("Characters: " + ConsoleCommands.CYAN + characters + ConsoleCommands.RESET);
         System.out.println("Select a " + ConsoleCommands.inRed("weapon") + " for your guess");
 
+        // get weapon from user
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         boolean validInput = false;
         String input;
@@ -266,6 +269,7 @@ public class Game {
             input = br.readLine();
             input = input.toUpperCase(); // Makes parsing easier
 
+            // check if user input a valid weapon
             for (String s : weapons) {
                 if (input.equals(s)) {
                     validInput = true;
@@ -273,12 +277,13 @@ public class Game {
                     break;
                 }
             }
-
+            
             if (!validInput) {
                 System.out.println("Enter valid weapon");
             }
         }
 
+        // get character from user
         System.out.println("Select a " + ConsoleCommands.inCyan("character") + " for your guess");
         validInput = false;
         String character = "";
@@ -291,6 +296,7 @@ public class Game {
                 return;
             }
 
+            // check for valid character
             for (String s : characters) {
                 if (input.equals(s)) {
                     validInput = true;
@@ -330,12 +336,14 @@ public class Game {
                 }
             }
 
+            // no refutation
             if(cardsContained == 0) {
                 System.out.println("You could not refute the guess");
+            // player has 1 card to refute
             } else if (cardsContained == 1) {
                 refuted = true;
                 System.out.println("You refute the guess using your " + cardsAbleToRefute.get(0) + " card");
-
+            // player has more than 1 card that they can refute with - check which one they want to use
             } else if(cardsContained > 1) {
                 refuted = true;
                 System.out.println("Your cards: " + playerMap.get(rotationNumber).getCards());
@@ -380,6 +388,9 @@ public class Game {
         }
     }
 
+    /**
+     *  go to next character in the refutation rotation
+     */
     private void nextGuessRotation(int rotationNumber) {
         System.out.println("Pass over device to " + playerMap.get(rotationNumber).getName());
         System.out.println("Press enter to continue");
