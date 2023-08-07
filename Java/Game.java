@@ -104,6 +104,11 @@ public class Game {
 
         //re add the murder cards to the deck
         allCards.addAll(murderer.getCards());
+
+        //remove the 4th player from the deck if only 3 players
+        if(playerNum == 3) {
+            allCards.remove(getCardByName("Percy"));
+        }
     }
 
     /**
@@ -255,11 +260,6 @@ public class Game {
             input = br.readLine();
             input = input.toUpperCase(); // Makes parsing easier
             
-            if (input.equals("Q") | input.equals("QUIT")) {
-                System.out.println("Stopping Game");
-                return;
-            }
-            
             for(String s : weapons) {
                 if (input.equals(s)) {
                     validInput = true;
@@ -298,10 +298,101 @@ public class Game {
             }
         }
 
-        Murderer murderGuess = new Murderer(getCardByName(weapon),getCardByName(estate.name),getCardByName(character));
-        System.out.println("Your guess is: " + murderGuess.ToString());
-        
-        //TODO implement refutations
+        // print guess
+        System.out.println("Your guess is: " + character + " killed in the " + estate.name + " with the " + weapon);
+
+        int startTurnNumber = currentPlayerTurn;
+        int rotationNumber = currentPlayerTurn;
+
+        // goes around all the players to refute the guess
+        rotationNumber++;
+        if(rotationNumber >= playerNum) rotationNumber = 0;
+        while(rotationNumber != startTurnNumber) {
+            nextGuessRotation(rotationNumber);
+
+            System.out.println(playerMap.get(currentPlayerTurn).getName() + " guessed that " + character + " killed in the " + estate.name + " with the " + weapon);
+            System.out.println("Your cards: " + playerMap.get(rotationNumber).getCards());
+
+            boolean refuted = false;
+            // check if any cards player has are contained in the guess
+            for(Card c : playerMap.get(rotationNumber).getCards()) {
+                if(Objects.equals(c.getCardName().toUpperCase(), character)) {
+                    if(refuteGuess(c)) {
+                        refuted = true;
+                        break;
+                    }
+                }
+                if(Objects.equals(c.getCardName().toUpperCase(), weapon)) {
+                    if(refuteGuess(c)) {
+                        refuted = true;
+                        break;
+                    }
+                }
+                if(Objects.equals(c.getCardName().toUpperCase(), estate.name)) {
+                    if(refuteGuess(c)) {
+                        refuted = true;
+                        break;
+                    }
+                }
+            }
+
+            if(refuted) {
+                break;
+            }
+            rotationNumber++;
+            if(rotationNumber >= playerNum) rotationNumber = 0;
+        }
+    }
+
+    private boolean refuteGuess(Card c) throws IOException {
+        System.out.println("You can refute the guess with your " + c.getCardName() + " card");
+        System.out.println("Would you like to refute? (YES/NO)");
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        boolean validInput = false;
+        String input;
+        String answer = "";
+        while(!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+
+            if(input.equals("YES") | input.equals("NO")) {
+                validInput = true;
+                answer = input;
+            }
+
+            if(!validInput) {
+                System.out.println("Enter valid answer (YES/NO)");
+            }
+        }
+
+        if(answer.equals("YES")) {
+            System.out.println("Guess refuted using " + c.getCardName().toUpperCase() + " card");
+            System.out.println("Press enter to continue");
+            try {
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader bufferedreader = new BufferedReader(isr);
+                String enter = bufferedreader.readLine();
+            } catch (IOException ioe) {
+                System.out.println("IO Exception raised With Guess Input");
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    private void nextGuessRotation(int rotationNumber) {
+        System.out.println("Pass over device to " + playerMap.get(rotationNumber).getName());
+        System.out.println("Press enter to continue");
+        try {
+            InputStreamReader isr = new InputStreamReader(System.in);
+            BufferedReader bufferedreader = new BufferedReader(isr);
+            String enter = bufferedreader.readLine();
+        } catch (IOException ioe) {
+            System.out.println("IO Exception raised With Guess Input");
+        }
+        ConsoleCommands.clearScreen();
     }
     
     /**
