@@ -216,6 +216,20 @@ public class Game {
      * @throws IOException
      */
     private void handleAttempt(Estate estate) throws IOException {
+        if(playerMap.get(currentPlayerTurn).getHasGuessed()) {
+            System.out.println("You have failed a solve attempt and can no longer make guess or solve attempts.");
+            System.out.println("Press enter to continue");
+            try {
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader bufferedreader = new BufferedReader(isr);
+                String enter = bufferedreader.readLine();
+            } catch (IOException ioe) {
+                System.out.println("IO Exception raised With Guess Input");
+            }
+            ConsoleCommands.clearScreen();
+            return;
+        }
+        
         // get input from user
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Do you want to guess or solve?");
@@ -493,7 +507,17 @@ public class Game {
             System.out.println("You win!");
             gameRunning = false;
         } else {
-            System.out.println("Your solve attempt was wrong");
+            System.out.println("Your solve attempt was wrong. You can now make no more solve or guess attempts.");
+            playerMap.get(currentPlayerTurn).setHasGuessed(true);
+            System.out.println("Press enter to continue");
+            try {
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader bufferedreader = new BufferedReader(isr);
+                String enter = bufferedreader.readLine();
+            } catch (IOException ioe) {
+                System.out.println("IO Exception raised With Guess Input");
+            }
+            ConsoleCommands.clearScreen();
         }
     }
 
