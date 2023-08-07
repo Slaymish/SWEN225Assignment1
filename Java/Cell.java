@@ -4,32 +4,29 @@
 
 // line 156 "model.ump"
 // line 249 "model.ump"
-interface Cell
-{
-  //------------------------
-  // INTERFACE
-  //------------------------
+interface Cell {
+    //------------------------
+    // INTERFACE
+    //------------------------
 
-  default void delete()
-  {}
+    default void delete() {
+    }
 
-  //------------------------
-  // DEVELOPER CODE - PROVIDED AS-IS
-  //------------------------
-  
-  // line 161 "model.ump"
-  default boolean isWalkable ()
-  {
-    return true;
-  }
+    //------------------------
+    // DEVELOPER CODE - PROVIDED AS-IS
+    //------------------------
 
-// line 164 "model.ump"
-  default boolean isDoor ()
-  {
-    return false;
-  }
+    // line 161 "model.ump"
+    default boolean isWalkable() {
+        return true;
+    }
 
-default String getDisplayChar() {
-	return "_";
-}
+    // line 164 "model.ump"
+    default boolean isDoor() {
+        return false;
+    }
+
+    default String getDisplayChar() {
+        return "_";
+    }
 }

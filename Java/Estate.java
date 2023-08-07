@@ -50,16 +50,6 @@ public class Estate {
         return wasSet;
     }
 
-  /*
-  public boolean setWeapon(Weapon aWeapon)
-  {
-    boolean wasSet = false;
-    weapon = aWeapon;
-    wasSet = true;
-    return wasSet;
-  }
-
-   */
 
     /**
      * Sets the origin of the estate

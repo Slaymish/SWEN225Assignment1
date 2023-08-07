@@ -137,7 +137,7 @@ public class Game {
                 System.out.println("Where do you want to move?");
 
                 String input;
-                int[] move = new int[2];
+                int[] moveBy = new int[2];
 
                 // Get move input
                 while (!validInput) {
@@ -150,23 +150,28 @@ public class Game {
                     }
 
                     try {
-                        move = parseInput(input, dice[2]);
+                        moveBy = parseInput(input, dice[2]); // x,y
                         validInput = true;
                     } catch (IllegalArgumentException iae) { // If error in parsing
                         System.out.println(ConsoleCommands.RED + "Invalid Move, try again" + ConsoleCommands.RESET);
                         displayMoveHelp();
                     }
 
-                    if (!board.isMoveValid(currentPlayerTurn, move[0], move[1])) {
-                        System.out.println(ConsoleCommands.RED + "You can't move there! try again" + ConsoleCommands.RESET);
-                        validInput = false;
+                    try {
+                        if (!board.isMoveValid(currentPlayerTurn, moveBy[0], moveBy[1])) {
+                            System.out.println(ConsoleCommands.RED + "You can't move there! try again" + ConsoleCommands.RESET);
+                            validInput = false;
+                        }
+                    }
+                    catch (Door.DoorEnteredEvent doorEnteredEvent){
+                        System.out.println("Now entering... " + ConsoleCommands.inBlue(doorEnteredEvent.estate.name));
+                        validInput = true;
+
                     }
                 }
 
-                // move player
-                // TODO : let player move into doors
-                System.out.println("Moving player " + currentPlayerTurn + " by (x=" + move[0] + ",y=" + move[1] + ")");
-                playerMap.get(currentPlayerTurn).setPositionWithOffset(move[0], move[1]);
+                // TODO : Test Door work (they should now)
+                playerMap.get(currentPlayerTurn).setPositionWithOffset(moveBy[0], moveBy[1]);
                 board.updatePeopleOnBoard(); 
 
                 if (currentPlayerInEstate()) {
@@ -299,7 +304,7 @@ public class Game {
         }
 
         // print guess
-        System.out.println("Your guess is: " + character + " killed in the " + estate.name + " with the " + weapon);
+        System.out.println("Your guess is: " + ConsoleCommands.inBlue(character) + " killed in the " + ConsoleCommands.inPurple(estate.name) + " with the " + ConsoleCommands.inRed(weapon));
 
         int startTurnNumber = currentPlayerTurn;
         int rotationNumber = currentPlayerTurn;
@@ -342,44 +347,6 @@ public class Game {
             rotationNumber++;
             if(rotationNumber >= playerNum) rotationNumber = 0;
         }
-    }
-
-    private boolean refuteGuess(Card c) throws IOException {
-        System.out.println("You can refute the guess with your " + c.getCardName() + " card");
-        System.out.println("Would you like to refute? (YES/NO)");
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        boolean validInput = false;
-        String input;
-        String answer = "";
-        while(!validInput) {
-            input = br.readLine();
-            input = input.toUpperCase(); // Makes parsing easier
-
-            if(input.equals("YES") | input.equals("NO")) {
-                validInput = true;
-                answer = input;
-            }
-
-            if(!validInput) {
-                System.out.println("Enter valid answer (YES/NO)");
-            }
-        }
-
-        if(answer.equals("YES")) {
-            System.out.println("Guess refuted using " + c.getCardName().toUpperCase() + " card");
-            System.out.println("Press enter to continue");
-            try {
-                InputStreamReader isr = new InputStreamReader(System.in);
-                BufferedReader bufferedreader = new BufferedReader(isr);
-                String enter = bufferedreader.readLine();
-            } catch (IOException ioe) {
-                System.out.println("IO Exception raised With Guess Input");
-            }
-
-            return true;
-        }
-        return false;
     }
 
     private void nextGuessRotation(int rotationNumber) {
@@ -437,9 +404,9 @@ public class Game {
      * @param input
      * @return
      */
-    private int[] parseInput(String input, int maxMove) {
+    public int[] parseInput(String input, int maxMove) {
         // TODO : add some tests for this
-        int[] move = new int[2];
+        int[] move = new int[2]; // x,y
         Scanner scanner = new Scanner(input);
         System.out.println(input);
         try {
@@ -459,7 +426,6 @@ public class Game {
                         move[0] += scanner.nextInt();
                         break;
                     default:
-                        System.out.println("Invalid Direction");
                         throw new IllegalArgumentException("Invalid Direction");
                 }
             }
@@ -644,48 +610,42 @@ public class Game {
 }
 
 class ConsoleCommands {
-    public static final String BLACK = "\033[0;30m";   // BLACK
     public static final String RED = "\033[0;31m";     // RED
     public static final String GREEN = "\033[0;32m";   // GREEN
-    public static final String YELLOW = "\033[0;33m";  // YELLOW
     public static final String BLUE = "\033[0;34m";    // BLUE
     public static final String PURPLE = "\033[0;35m";  // PURPLE
     public static final String CYAN = "\033[0;36m";    // CYAN
-    public static final String WHITE = "\033[0;37m";   // WHITE
     public static final String RESET = "\033[0m";  // Text Reset
-
-    // Bold
-    public static final String BLACK_BOLD = "\033[1;30m";  // BLACK
-    public static final String RED_BOLD = "\033[1;31m";    // RED
-    public static final String GREEN_BOLD = "\033[1;32m";  // GREEN
     public static final String YELLOW_BOLD = "\033[1;33m"; // YELLOW
-    public static final String BLUE_BOLD = "\033[1;34m";   // BLUE
-    public static final String PURPLE_BOLD = "\033[1;35m"; // PURPLE
-    public static final String CYAN_BOLD = "\033[1;36m";   // CYAN
-    public static final String WHITE_BOLD = "\033[1;37m";  // WHITE
 
+    public static boolean useColour = true;
     public static String inYellow(String text){
-        return YELLOW_BOLD + text + RESET;
+       return inText(text, YELLOW_BOLD);
     }
 
     public static String inRed(String text){
-        return RED + text + RESET;
+        return inText(text, RED);
     }
-
     public static String inGreen(String text){
-        return GREEN + text + RESET;
+        return inText(text, GREEN);
     }
 
     public static String inBlue(String text){
-        return BLUE + text + RESET;
+       return inText(text, BLUE);
     }
 
     public static String inPurple(String text){
-        return PURPLE + text + RESET;
+       return inText(text, PURPLE);
     }
 
     public static String inCyan(String text){
-        return CYAN + text + RESET;
+        return inText(text, CYAN);
+    }
+
+    public static String inText(String text, String color){
+        // TODO: Check if unix terminal
+        if(!useColour) return text;
+        return color + text + RESET;
     }
 
     public static void clearScreen() {
