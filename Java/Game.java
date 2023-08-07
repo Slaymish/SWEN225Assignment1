@@ -241,65 +241,65 @@ public class Game {
         if(guessOrSolve.equals("GUESS")) {
             guess(estate);
         } else if(guessOrSolve.equals("SOLVE")) {
-            solve();
+            solve(estate);
         }
     }
     
     /**
      * handles guess attempts
      */
-    
+
     private void guess(Estate estate) throws IOException {
         Player currentPlayer = getCurrentPlayer();
         List<String> weapons = getWeapons();
         List<String> characters = getCharacters();
-        
+
         System.out.println("Weapons: " + ConsoleCommands.RED + weapons + ConsoleCommands.RESET);
         System.out.println("Characters: " + ConsoleCommands.CYAN + characters + ConsoleCommands.RESET);
         System.out.println("Select a " + ConsoleCommands.inRed("weapon") + " for your guess");
-        
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        boolean validInput = false; 
+        boolean validInput = false;
         String input;
         String weapon = "";
-        while(!validInput) {
+        while (!validInput) {
             input = br.readLine();
             input = input.toUpperCase(); // Makes parsing easier
-            
-            for(String s : weapons) {
+
+            for (String s : weapons) {
                 if (input.equals(s)) {
                     validInput = true;
                     weapon = input;
                     break;
                 }
             }
-            
-            if(!validInput) {
+
+            if (!validInput) {
                 System.out.println("Enter valid weapon");
             }
         }
-        
+
         System.out.println("Select a " + ConsoleCommands.inCyan("character") + " for your guess");
         validInput = false;
         String character = "";
-        while(!validInput) {
+        while (!validInput) {
             input = br.readLine();
             input = input.toUpperCase(); // Makes parsing easier
-            
+
             if (input.equals("Q") | input.equals("QUIT")) {
                 System.out.println("Stopping Game");
                 return;
             }
-            
-            for(String s : characters) {
+
+            for (String s : characters) {
                 if (input.equals(s)) {
                     validInput = true;
                     character = input;
                     break;
                 }
             }
-            
-            if(!validInput) {
+
+            if (!validInput) {
                 System.out.println("Enter valid character");
             }
         }
@@ -312,41 +312,71 @@ public class Game {
 
         // goes around all the players to refute the guess
         rotationNumber++;
-        if(rotationNumber >= playerNum) rotationNumber = 0;
-        while(rotationNumber != startTurnNumber) {
+        if (rotationNumber >= playerNum) rotationNumber = 0;
+        while (rotationNumber != startTurnNumber) {
             nextGuessRotation(rotationNumber);
 
             System.out.println(playerMap.get(currentPlayerTurn).getName() + " guessed that " + character + " killed in the " + estate.name + " with the " + weapon);
-            System.out.println("Your cards: " + playerMap.get(rotationNumber).getCards());
 
             boolean refuted = false;
             // check if any cards player has are contained in the guess
-            for(Card c : playerMap.get(rotationNumber).getCards()) {
-                if(Objects.equals(c.getCardName().toUpperCase(), character)) {
-                    if(refuteGuess(c)) {
-                        refuted = true;
-                        break;
-                    }
-                }
-                if(Objects.equals(c.getCardName().toUpperCase(), weapon)) {
-                    if(refuteGuess(c)) {
-                        refuted = true;
-                        break;
-                    }
-                }
-                if(Objects.equals(c.getCardName().toUpperCase(), estate.name)) {
-                    if(refuteGuess(c)) {
-                        refuted = true;
-                        break;
-                    }
+            int cardsContained = 0;
+            ArrayList<String> cardsAbleToRefute = new ArrayList<String>();
+            for (Card c : playerMap.get(rotationNumber).getCards()) {
+                String card = c.getCardName().toUpperCase();
+                if (card.equals(character) || card.equals(weapon) || card.equals(estate.name)) {
+                    cardsContained++;
+                    cardsAbleToRefute.add(card);
                 }
             }
 
-            if(refuted) {
+            if(cardsContained == 0) {
+                System.out.println("You could not refute the guess");
+            } else if (cardsContained == 1) {
+                refuted = true;
+                System.out.println("You refute the guess using your " + cardsAbleToRefute.get(0) + " card");
+
+            } else if(cardsContained > 1) {
+                refuted = true;
+                System.out.println("Your cards: " + playerMap.get(rotationNumber).getCards());
+                System.out.println("You can refute the guess using any of the following cards: ");
+                System.out.println(cardsAbleToRefute);
+                System.out.println("Which card would you like to use to refute the guess?");
+
+                br = new BufferedReader(new InputStreamReader(System.in));
+                validInput = false;
+                while (!validInput) {
+                    input = br.readLine();
+                    input = input.toUpperCase(); // Makes parsing easier
+
+                    for (String s : cardsAbleToRefute) {
+                        if (input.equals(s)) {
+                            validInput = true;
+                            break;
+                        }
+                    }
+
+                    if (!validInput) {
+                        System.out.println("Enter valid card");
+                    }
+                }
+
+            }
+            System.out.println("Press enter to continue");
+            try {
+                InputStreamReader isr = new InputStreamReader(System.in);
+                BufferedReader bufferedreader = new BufferedReader(isr);
+                String enter = bufferedreader.readLine();
+            } catch (IOException ioe) {
+                System.out.println("IO Exception raised With Guess Input");
+            }
+            ConsoleCommands.clearScreen();
+
+            if (refuted) {
                 break;
             }
             rotationNumber++;
-            if(rotationNumber >= playerNum) rotationNumber = 0;
+            if (rotationNumber >= playerNum) rotationNumber = 0;
         }
     }
 
@@ -366,10 +396,109 @@ public class Game {
     /**
      * handles solve attempts
      */
-    private void solve() {
-        //TODO implement solve attempt
+    private void solve(Estate estate) throws IOException{
+        Player currentPlayer = getCurrentPlayer();
+        List<String> weapons = getWeapons();
+        List<String> characters = getCharacters();
+        List<String> estates = getEstates();
+
+        System.out.println("Weapons: " + ConsoleCommands.RED + weapons + ConsoleCommands.RESET);
+        System.out.println("Characters: " + ConsoleCommands.CYAN + characters + ConsoleCommands.RESET);
+        System.out.println("Estates: " + ConsoleCommands.PURPLE + estates + ConsoleCommands.RESET);
+
+        System.out.println("Select a " + ConsoleCommands.inRed("weapon") + " for your solve attempt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        boolean validInput = false;
+        String input;
+        String weapon = "";
+        while (!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+
+            for (String s : weapons) {
+                if (input.equals(s)) {
+                    validInput = true;
+                    weapon = input;
+                    break;
+                }
+            }
+
+            if (!validInput) {
+                System.out.println("Enter valid weapon");
+            }
+        }
+
+        System.out.println("Select a " + ConsoleCommands.inCyan("character") + " for your solve attempt");
+        validInput = false;
+        String character = "";
+        while (!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+
+            if (input.equals("Q") | input.equals("QUIT")) {
+                System.out.println("Stopping Game");
+                return;
+            }
+
+            for (String s : characters) {
+                if (input.equals(s)) {
+                    validInput = true;
+                    character = input;
+                    break;
+                }
+            }
+
+            if (!validInput) {
+                System.out.println("Enter valid character");
+            }
+        }
+
+        System.out.println("Select a " + ConsoleCommands.inCyan("estate") + " for your solve attempt");
+        validInput = false;
+        String estateGuessed = "";
+        while (!validInput) {
+            input = br.readLine();
+            input = input.toUpperCase(); // Makes parsing easier
+
+            if (input.equals("Q") | input.equals("QUIT")) {
+                System.out.println("Stopping Game");
+                return;
+            }
+
+            for (String s : estates) {
+                if (input.equals(s)) {
+                    validInput = true;
+                    estateGuessed = input; // was character
+                    break;
+                }
+            }
+
+            if (!validInput) {
+                System.out.println("Enter valid estate");
+            }
+        }
+
+        if(murderer.checkMurderer(getCardByName(weapon), getCardByName(estateGuessed), getCardByName(character))) {
+            System.out.println("You win!");
+            gameRunning = false;
+        } else {
+            System.out.println("Your solve attempt was wrong");
+        }
     }
-    
+
+    /**
+     * gets list of estate cards
+     */
+    private List<String> getEstates() {
+        List<String> estates = new ArrayList<String>();
+        for(Card c : allCards) {
+            if(c.getCardType() == Card.CardType.Estate) {
+                estates.add(c.getCardName().toUpperCase());
+            }
+        }
+        return estates;
+    }
+
     /**
      * gets list of weapon cards
      */
@@ -615,7 +744,8 @@ public class Game {
     public Card getCardByName(String cardName) {
 
         for (Card c : allCards) {
-            if (c.getCardName().equals(cardName)) return c;
+
+            if (c.getCardName().toUpperCase().equals(cardName.toUpperCase())) return c;
         }
         return null;
     }
