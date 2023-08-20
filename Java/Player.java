@@ -37,30 +37,39 @@ public class Player {
     return wasSet;
   }
 
-  public boolean setCards(List<Card> aCards)
-  {
-    boolean wasSet = false;
-    cards = aCards;
-    wasSet = true;
-    return wasSet;
-  }
 
+  /**
+   * Move the player by (x,y)
+   * Sets the prevPosition to what the player what at previously
+   * @param x
+   * @param y
+   * @return
+   */
   public boolean setPositionWithOffset(int x, int y){
     boolean wasSet = false;
-    prevPosition[0] = position[0];
-    prevPosition[1] = position[1];
-    position[0] += x;
-    position[1] += y;
+    prevPosition = position;
+
+    int[] newPosition = new int[2];
+    newPosition[0] = position[0] + x;
+    newPosition[1] = position[1] + y;
+
+    position = newPosition;
     wasSet = true;
     return wasSet;
   }
 
+  /**
+   * Sets prevPosition AND position to the same coords
+   * Used only for setting up the game
+   * @param x
+   * @param y
+   * @return
+   */
   public boolean setPosition(int x, int y){
     boolean wasSet = false;
-    prevPosition[0] = position[0];
-    prevPosition[1] = position[1];
-    position[0] = x;
-    position[1] = y;
+    prevPosition[0] = x;
+    prevPosition[1] = y;
+    position = prevPosition;
     wasSet = true;
     return wasSet;
   }
