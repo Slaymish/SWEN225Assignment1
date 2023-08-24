@@ -47,6 +47,18 @@ public class GameController implements KeyListener{
     }
 
     /**
+     * Method called when cell on GUI's board is clicked
+     * Row/col are where u clicked
+     * @param row
+     * @param col
+     */
+    public static void cellClicked(int row, int col) {
+        System.out.println("You clicked a cell");
+        System.out.println(Board.getBoard()[row][col]);
+        // TODO implement cell move reaction
+    }
+
+    /**
      * Invoked when a key has been typed.
      * See the class description for {@link KeyEvent} for a definition of
      * a key typed event.
@@ -55,7 +67,6 @@ public class GameController implements KeyListener{
      */
     @Override
     public void keyTyped(KeyEvent e) {
-
     }
 
     /**

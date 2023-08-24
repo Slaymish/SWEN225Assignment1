@@ -2,9 +2,14 @@
 /*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
 
 
+import javax.swing.*;
+
 // line 156 "model.ump"
 // line 249 "model.ump"
 interface Cell {
+    JButton button = null;
+
+
     //------------------------
     // INTERFACE
     //------------------------

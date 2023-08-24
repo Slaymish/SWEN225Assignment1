@@ -49,7 +49,7 @@ public class GameView extends JFrame {
 
         // Layout components
         setLayout(new BorderLayout());
-        add(boardPanel, BorderLayout.CENTER);
+        add(boardPanel, BorderLayout.WEST);
         add(infoArea, BorderLayout.EAST);
 
         // add context buttons
@@ -115,6 +115,31 @@ public class GameView extends JFrame {
     public void updateBoard() {
         // Update the boardPanel based on the current game state
         // TODO: Display board in GUI (get from model)
+        Cell[][] board = game.getBoard().getBoard();
+
+        if (board==null) throw new NullPointerException("When trying to update board in view");
+
+        JPanel buttonCellPanel = new JPanel();
+        buttonCellPanel.setLayout(new GridLayout(board.length,board.length));
+
+        //int offset = 20;
+        for(int row = 0; row<board.length;row++){
+            for(int col = 0; col < board[0].length;col++){
+                //this.drawRect(col*offset,row*offset,width,height);
+                JButton cellButton = new JButton(board[row][col].getDisplayChar());
+                int finalRow = row;
+                int finalCol = col;
+                cellButton.addActionListener(e -> GameController.cellClicked(finalRow, finalCol));
+                buttonCellPanel.add(cellButton);
+                // TODO change getDisplayChar to return a color?
+            }
+        }
+
+        buttonCellPanel.setPreferredSize(new Dimension(500,500));
+        buttonCellPanel.setBackground(new Color(255,0,0));
+        boardPanel.add(buttonCellPanel);
+
+        boardPanel.revalidate();
         repaint();
     }
 
@@ -130,6 +155,7 @@ public class GameView extends JFrame {
 
     public GameView attachGame(Game game) {
         this.game = game;
+        updateBoard();
         return this;
     }
 }

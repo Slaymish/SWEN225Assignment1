@@ -1,9 +1,12 @@
 public class Main {
     public static void main(String[] args) {
         // Create view, attach game to view, and run view
+        Game game = new Game();
+        game.Setup();
+
         GameView view = GameView.getView()
-                .attachGame(new Game())
-                .setContextButtons("guess", "solve");
+                .attachGame(game)
+                .setContextButtons("guess", "solve"); // what buttons to start showing
 
     }
 }

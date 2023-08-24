@@ -15,11 +15,11 @@ public class Board {
     private Map<Integer, Person> players;
 
     //The map is a 24x24 grid
-    final int BoardHeight = 24;
-    final int BoardWidth = 24;
+    static final int BoardHeight = 24;
+    static final int BoardWidth = 24;
 
     //2D array of Cell objects representing the board
-    private final Cell[][] board; // [y][x]
+    private static final Cell[][] board = new Cell[BoardWidth][BoardHeight]; // [y][x]
 
     private Map<Integer,Cell> originalCells;
 
@@ -28,7 +28,6 @@ public class Board {
     //------------------------
 
     public Board() {
-        board = new Cell[BoardHeight][BoardWidth];
         players = new HashMap<>();
         estateList = new ArrayList<>();
 
@@ -183,6 +182,10 @@ public class Board {
         estate.getEstateCells().forEach(insideCell -> {
             board[insideCell.getRow()][insideCell.getCol()] = insideCell;
         });
+    }
+
+    public static Cell[][] getBoard(){
+        return board;
     }
 
     private void BuildDoors() {

@@ -18,12 +18,15 @@ public class Game {
     private Map<Integer, Player> playerMap;
 
     private boolean gameRunning = false;
+    private boolean gameIsSetup = false;
 
     //------------------------
     // CONSTRUCTOR
     //------------------------
 
     public Game() {
+        gameRunning = false;
+        gameIsSetup = false;
 
     }
 
@@ -55,6 +58,8 @@ public class Game {
      * Handles setting up the game
      */
     public void Setup() {
+        if(gameIsSetup) return;
+
         System.out.println("Setting Up Game");
         board = new Board();
 
@@ -79,6 +84,7 @@ public class Game {
         Collections.shuffle(allCards);
 
         SetupPlayers();
+        gameIsSetup = true;
     }
 
     public void SetupPlayers() {
@@ -112,7 +118,7 @@ public class Game {
      * Handles running the game
      */
     public void Run() {
-        System.out.println("Starting Game");
+        if (gameRunning) return;
 
         gameRunning = true;
         while (gameRunning) {
