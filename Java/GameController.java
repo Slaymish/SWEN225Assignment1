@@ -36,6 +36,16 @@ public class GameController implements KeyListener{
 
     }
 
+    public static void createNewGame() {
+        System.out.println("New Game");
+        // TODO Implement new game (in model)
+    }
+
+    public static void quitGame() {
+        System.out.println("Quit Game");
+        System.exit(0);
+    }
+
     /**
      * Invoked when a key has been typed.
      * See the class description for {@link KeyEvent} for a definition of

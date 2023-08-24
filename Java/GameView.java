@@ -28,6 +28,25 @@ public class GameView extends JFrame {
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
 
+        // JMenu
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Menu");
+        JMenuItem NewGameItem = new JMenuItem("New Game");
+        NewGameItem.addActionListener(e -> {
+                   GameController.createNewGame();
+                });
+        JMenuItem quitItem = new JMenuItem("Quit");
+        quitItem.addActionListener(e -> {
+            GameController.quitGame();
+        });
+
+        menu.add(NewGameItem);
+        menu.add(quitItem);
+
+        menuBar.add(menu);
+        setJMenuBar(menuBar);
+
+
         // Layout components
         setLayout(new BorderLayout());
         add(boardPanel, BorderLayout.CENTER);
