@@ -21,6 +21,8 @@ public class Board {
     //2D array of Cell objects representing the board
     private final Cell[][] board; // [y][x]
 
+    private Map<Integer,Cell> originalCells;
+
     //------------------------
     // CONSTRUCTOR
     //------------------------
@@ -29,6 +31,9 @@ public class Board {
         board = new Cell[BoardHeight][BoardWidth];
         players = new HashMap<>();
         estateList = new ArrayList<>();
+
+        // Just to avoid duplicatation of players
+        originalCells = new HashMap<>();
         initializeBoard();
     }
 
@@ -63,15 +68,48 @@ public class Board {
         updatePeopleOnBoard();
     }
 
-    /**
-     * Goes through list of players and updates their position on the board
-     */
-    public void updatePeopleOnBoard() {
-        players.forEach((playerNum, person) -> {
-            board[person.getPrevY()][person.getPrevX()] = new EmptyCell(); // TODO change to previous cell (not just empty)
-            board[person.getY()][person.getX()] = person;
-        });
+    void updatePeopleOnBoard() {
+        players.forEach(this::updatePersonOnBoard);
     }
+
+    /**
+     * Update a single person to their new postition
+     * And replaces the cell they were on with the original cell (stored in originalCells)
+     * Only returns true if player current/prev positions are different
+     */
+    public boolean updatePersonOnBoard(Integer playerNum, Person person) {
+        // Check if the player has moved
+        if (!person.getPlayer().position.equals(person.getPlayer().prevPosition)) {
+            // Get the original cell for the new position (where the player is moving to)
+            Cell newOriginalCell = board[person.getY()][person.getX()];
+
+            // Check if the original cell is a Person cell and throw an exception if it is
+            if (newOriginalCell instanceof Person) {
+                throw new RuntimeException("Person cell attempted to be added to originalCell Map");
+            }
+
+
+            // Get the original cell for the current position (where the player is moving from)
+            Cell ogCell = originalCells.getOrDefault(playerNum, new EmptyCell());
+
+            // Update the board with the original cell at the previous position
+            board[person.getPrevY()][person.getPrevX()] = ogCell;
+
+            // Update the original cells map with the new original cell for the next update
+            originalCells.put(playerNum, newOriginalCell);
+        } else {
+            // If the player has not moved, you can handle it here if needed
+            System.out.println(person.getPlayer().getName() + " has not moved!");
+        }
+
+        // Place the player at the new position
+        board[person.getY()][person.getX()] = person;
+
+        person.getPlayer().prevPosition = person.getPlayer().position; //update prev position to current position
+
+        return true;
+    }
+
 
     public String displayBoard() {
         StringBuilder sb = new StringBuilder();

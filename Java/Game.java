@@ -598,7 +598,7 @@ public class Game {
             throw new IllegalArgumentException("Mismatched input");
         }
 
-        if (move[0] + move[1] > maxMove) {
+        if (Math.abs(move[0]) + Math.abs(move[1]) > maxMove) {
             throw new IllegalArgumentException("Move too large");
         }
 
