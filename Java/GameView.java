@@ -20,6 +20,12 @@ public class GameView extends JFrame {
 
     private GameView() {
         super("Cluedo");
+
+        try {
+            UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
@@ -125,14 +131,17 @@ public class GameView extends JFrame {
         //int offset = 20;
         for(int row = 0; row<board.length;row++){
             for(int col = 0; col < board[0].length;col++){
-                //this.drawRect(col*offset,row*offset,width,height);
-                JButton cellButton = new JButton(board[row][col].getDisplayChar());
+                Cell cell = board[row][col];
+                JButton cellButton = new JButton(cell.getDisplayChar());
                 cellButton.setMargin(new Insets(0, 0 ,0, 0));
+                cellButton.setBackground(cell.getColor()); // fixme backgorund isn't getting set >:(
+                cellButton.setForeground(Color.BLACK); // Setting the text color to black
+                cellButton.setOpaque(true);
+                cellButton.setBorderPainted(false);
                 int finalRow = row;
                 int finalCol = col;
                 cellButton.addActionListener(e -> GameController.cellClicked(finalRow, finalCol));
                 buttonCellPanel.add(cellButton);
-                // TODO change getDisplayChar to return a color?
             }
         }
 

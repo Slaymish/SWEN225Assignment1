@@ -3,13 +3,11 @@
 
 
 import javax.swing.*;
+import java.awt.*;
 
 // line 156 "model.ump"
 // line 249 "model.ump"
 interface Cell {
-    JButton button = null;
-
-
     //------------------------
     // INTERFACE
     //------------------------
@@ -34,4 +32,6 @@ interface Cell {
     default String getDisplayChar() {
         return "_";
     }
+
+    default Color getColor(){ return Color.white;}
 }
