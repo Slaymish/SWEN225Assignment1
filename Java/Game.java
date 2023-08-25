@@ -18,13 +18,25 @@ public class Game {
     private Map<Integer, Player> playerMap;
 
     private boolean gameRunning = false;
+    private boolean gameIsSetup = false;
+
+    enum GameState {
+        PlayerToMove,
+        PlayerToAttempt,
+        PlayerWon,
+        PlayersLost,
+        GameSetup
+    }
+
+    private static GameState gameState;
+
 
     //------------------------
     // CONSTRUCTOR
     //------------------------
 
     public Game() {
-
+        if(gameState == null) gameState = GameState.GameSetup;
     }
 
     //------------------------
@@ -34,6 +46,12 @@ public class Game {
     public int getCurrentPlayerTurn() {
         return currentPlayerTurn;
     }
+
+    public boolean isGameRunning(){
+        return getState()==GameState.PlayerToAttempt||getState()==GameState.PlayerToMove;
+    }
+
+    public static GameState getState(){ return gameState;}
 
     public Board getBoard() {
         return board;
@@ -55,6 +73,8 @@ public class Game {
      * Handles setting up the game
      */
     public void Setup() {
+        if(gameIsSetup) return;
+
         System.out.println("Setting Up Game");
         board = new Board();
 
@@ -79,6 +99,7 @@ public class Game {
         Collections.shuffle(allCards);
 
         SetupPlayers();
+        gameIsSetup = true;
     }
 
     public void SetupPlayers() {
@@ -112,7 +133,7 @@ public class Game {
      * Handles running the game
      */
     public void Run() {
-        System.out.println("Starting Game");
+        if (gameRunning) return;
 
         gameRunning = true;
         while (gameRunning) {
