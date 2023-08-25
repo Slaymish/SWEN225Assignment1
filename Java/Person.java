@@ -44,7 +44,7 @@ public class Person implements Cell {
 
     @Override
     public String getDisplayChar() {
-      return ConsoleCommands.inYellow(name.substring(0, 1));
+      return name.substring(0, 1);
     }
 
     public Player getPlayer() {
