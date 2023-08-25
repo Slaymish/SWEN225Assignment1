@@ -46,7 +46,7 @@ public class Door implements Cell {
 
     @Override
     public String getDisplayChar() {
-        return ConsoleCommands.inPurple("D");
+        return "D";
     }
 
     public static class DoorEnteredEvent extends Throwable {
