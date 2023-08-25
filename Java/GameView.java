@@ -127,6 +127,7 @@ public class GameView extends JFrame {
             for(int col = 0; col < board[0].length;col++){
                 //this.drawRect(col*offset,row*offset,width,height);
                 JButton cellButton = new JButton(board[row][col].getDisplayChar());
+                cellButton.setMargin(new Insets(0, 0 ,0, 0));
                 int finalRow = row;
                 int finalCol = col;
                 cellButton.addActionListener(e -> GameController.cellClicked(finalRow, finalCol));
