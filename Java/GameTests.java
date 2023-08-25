@@ -1,7 +1,6 @@
 import java.io.*;
 
 import org.junit.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -34,11 +33,10 @@ public class GameTests {
     }
 
     public void initGame() { // Start a new game
-        game = new Game();
-        game.Setup();
+        game = Game.getGameInstance();
+        game.setup();
         ConsoleCommands.useColour = false; // stop use colour
         provideInput("4\n"); // 4 players
-        game.SetupPlayers();
         System.out.println("Game started"); // FIXME - Can't get tests to get past here
     }
 
@@ -133,7 +131,7 @@ public class GameTests {
      */
     @Test
     public void testOverMax() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("UP 5 LEFT 2", 10)
@@ -146,7 +144,7 @@ public class GameTests {
 
     @Test
     public void testInvalidDirection() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("BLEH 5 LEFT 2", 10)
@@ -159,7 +157,7 @@ public class GameTests {
 
     @Test
     public void testInvalidInput() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("5 UP LEFT 10", 10)
@@ -172,7 +170,7 @@ public class GameTests {
 
     @Test
     public void testInvalidMoveNumber() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("UP -1 LEFT 2", 10)
@@ -185,7 +183,7 @@ public class GameTests {
 
     @Test
     public void testEmptyInput() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("", 10)
@@ -194,7 +192,7 @@ public class GameTests {
 
     @Test
     public void testDuplicateDirections() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("UP UP LEFT 2", 10)
@@ -203,7 +201,7 @@ public class GameTests {
 
     @Test
     public void testInvalidCombinationOfMoveNumberAndDirection() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("UP 11 LEFT 2", 10)
@@ -212,7 +210,7 @@ public class GameTests {
 
     @Test
     public void testInvalidCharacterInDirection() {
-        Game gameTemp = new Game();
+        Game gameTemp = Game.getGameInstance();
 
         assertThrows(IllegalArgumentException.class,
                 () -> gameTemp.parseInput("UP 5 L&H 2", 10)
