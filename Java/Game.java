@@ -20,14 +20,23 @@ public class Game {
     private boolean gameRunning = false;
     private boolean gameIsSetup = false;
 
+    enum GameState {
+        PlayerToMove,
+        PlayerToAttempt,
+        PlayerWon,
+        PlayersLost,
+        GameSetup
+    }
+
+    private static GameState gameState;
+
+
     //------------------------
     // CONSTRUCTOR
     //------------------------
 
     public Game() {
-        gameRunning = false;
-        gameIsSetup = false;
-
+        if(gameState == null) gameState = GameState.GameSetup;
     }
 
     //------------------------
@@ -37,6 +46,12 @@ public class Game {
     public int getCurrentPlayerTurn() {
         return currentPlayerTurn;
     }
+
+    public boolean isGameRunning(){
+        return getState()==GameState.PlayerToAttempt||getState()==GameState.PlayerToMove;
+    }
+
+    public static GameState getState(){ return gameState;}
 
     public Board getBoard() {
         return board;

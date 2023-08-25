@@ -53,9 +53,15 @@ public class GameController implements KeyListener{
      * @param col
      */
     public static void cellClicked(int row, int col) {
-        System.out.println("You clicked a cell");
-        System.out.println(Board.getBoard()[row][col]);
         // TODO implement cell move reaction
+
+        switch (Game.getState()){
+            case PlayerToMove -> {
+                System.out.println("Move player to " + Board.getBoard()[row][col]);
+            }
+            default -> throw new RuntimeException("Can only click on cells when players turn to move");
+        }
+
     }
 
     /**
