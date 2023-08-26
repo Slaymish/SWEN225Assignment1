@@ -588,7 +588,6 @@ public class Game {
      * @return
      */
     public int[] parseInput(String input, int maxMove) {
-        // TODO : add some tests for this
         int[] move = new int[2]; // x,y
         Scanner scanner = new Scanner(input);
         System.out.println(input);
@@ -834,7 +833,6 @@ class ConsoleCommands {
     }
 
     public static String inText(String text, String color){
-        // TODO: Check if unix terminal
         if(!useColour) return text;
         return color + text + RESET;
     }
