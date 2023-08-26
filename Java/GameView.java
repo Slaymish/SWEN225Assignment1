@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +35,7 @@ public class GameView extends JFrame {
         boardPanel = new JPanel(); // You can customize this to display the game board
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
+        
 
         // JMenu
         JMenuBar menuBar = new JMenuBar();
@@ -52,7 +52,6 @@ public class GameView extends JFrame {
                     "Confirm Quit",
                     JOptionPane.YES_NO_OPTION
             );
-
             if (result == JOptionPane.YES_OPTION) {
                 System.exit(0);
             }
@@ -67,9 +66,10 @@ public class GameView extends JFrame {
                         "Confirm Quit",
                         JOptionPane.YES_NO_OPTION
                 );	
-
                 if (result == JOptionPane.YES_OPTION) {
                     System.exit(0);
+                } else {
+                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent window from closing
                 }
             }
         });
@@ -131,6 +131,20 @@ public class GameView extends JFrame {
            JButton but = contextButtons.getOrDefault(context[i],null);
            if(but==null) throw new IllegalArgumentException("Button " + context[i] + " not found");
            but.setVisible(true);
+           
+           // Set tooltips based on the context
+           switch (context[i]) {
+               case "roll":
+                   but.setToolTipText("Click to roll two six sided die.");
+                   break;
+               case "guess":
+                   but.setToolTipText("Click to make a guess about the murder.");
+                   break;
+               case "solve":
+                   but.setToolTipText("Click to attempt to solve the mystery.");
+                   break;
+               // Add more cases and tooltips for other buttons as needed
+           }
        }
        return this;
     }
