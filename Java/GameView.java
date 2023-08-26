@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +46,32 @@ public class GameView extends JFrame {
                 });
         JMenuItem quitItem = new JMenuItem("Quit");
         quitItem.addActionListener(e -> {
-            GameController.quitGame();
+            int result = JOptionPane.showConfirmDialog(
+                    this,
+                    "Are you sure you want to quit the game?",
+                    "Confirm Quit",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (result == JOptionPane.YES_OPTION) {
+                System.exit(0);
+            }
+        });
+        // Add a window listener to handle window close
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int result = JOptionPane.showConfirmDialog(
+                        GameView.this,
+                        "Are you sure you want to quit the game?",
+                        "Confirm Quit",
+                        JOptionPane.YES_NO_OPTION
+                );	
+
+                if (result == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                }
+            }
         });
 
         menu.add(NewGameItem);
