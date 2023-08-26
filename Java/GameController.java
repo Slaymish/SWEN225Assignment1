@@ -3,18 +3,21 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class GameController implements KeyListener{
+public class GameController {
     public GameController() {
         System.out.println("GameController created");
     }
 
+    /**
+     * Performs dice roll.
+     * Stored in field in model (Game)
+     * Then updates the view based on new state
+     */
     public static void rollDice() {
         System.out.println("Dice rolled");
-        // TODO: Implement dice rolling (in model)
-        // Temporarily adds a dice roll to the info area
-        GameView.getView().updateInfo("Dice rolled");
-        // and just testing the context buttons
-        GameView.getView().setContextButtons("guess", "solve");
+        Game.getGameInstance().performDiceRoll();
+        Game.getGameInstance().setGameState(Game.GameState.WaitingForPlayerToMove);
+        updateView();
     }
 
     public static void guessButtonClicked() {
@@ -33,12 +36,13 @@ public class GameController implements KeyListener{
         GameView.getView().updateInfo("Player solved");
         // and just testing the context buttons
         GameView.getView().setContextButtons("roll");
-
     }
 
     public static void createNewGame() {
         System.out.println("New Game");
         // TODO Implement new game (in model)
+        Game.getGameInstance().resetGame();
+        updateView();
     }
 
     public static void quitGame() {
@@ -53,49 +57,72 @@ public class GameController implements KeyListener{
      * @param col
      */
     public static void cellClicked(int row, int col) {
-        // TODO implement cell move reaction
-
         switch (Game.getState()){
-            case PlayerToMove -> {
-                System.out.println("Move player to " + Board.getBoard()[row][col]);
+            case WaitingForPlayerToMove -> {
+                boolean canMoveThere = Game.getGameInstance().getBoard().isMoveValidAtClick(row,col);
+                if(canMoveThere){
+                    System.out.println("Move player to " + Board.getBoard()[row][col]);
+                    // TODO: do something here.. (move player)
+                }
+                else{
+                    GameView.getView().updateInfo("Can't move there!");
+                }
             }
             default -> throw new RuntimeException("Can only click on cells when players turn to move");
         }
-
     }
 
     /**
-     * Invoked when a key has been typed.
-     * See the class description for {@link KeyEvent} for a definition of
-     * a key typed event.
-     *
-     * @param e the event to be processed
+     * Update the GUI's view based on the gameState
      */
-    @Override
-    public void keyTyped(KeyEvent e) {
+    public static void updateView(){
+        GameView view = GameView.getView();
+
+        switch (Game.getState()){
+            case PlayerToMove -> {
+                view.updateBoard();
+                view.updateInfo("Player To move..");
+                view.setContextButtons("roll");
+                updatePlayerInTitle();
+            }
+            case WaitingForPlayerToMove -> {
+                int[] maxMoves = Game.getGameInstance().getCurrentMaxMoves();
+                view.updateInfo("You rolled a " + maxMoves[0] + " and a " + maxMoves[1]);
+                view.setContextButtons(); // get rid of all buttons
+                updatePlayerInTitle();
+            }
+            case GameSetup -> {
+                view.updateInfo("Game setting up...");
+                view.setContextButtons();
+                view.displaySetup();
+            }
+            case PlayerWon -> view.updateInfo("Player has won!");
+            case PlayersLost -> view.updateInfo("You all lost!!");
+            case PlayerToAttempt -> {
+                view.updateInfo("You can solve/guess nowww..");
+                view.setContextButtons("guess","solve"); // TODO: Change if can only solve (if not in estate)
+            }
+            default -> throw new IllegalStateException("This shouldn't happen!");
+        }
+    }
+
+
+    private static void updatePlayerInTitle(){
+        String name = Game.getGameInstance().getCurrentPlayer().getName();
+        GameView.getView().setTitle(name);
+        // TODO instead of editing the title, add in another label and set that
     }
 
     /**
-     * Invoked when a key has been pressed.
-     * See the class description for {@link KeyEvent} for a definition of
-     * a key pressed event.
-     *
-     * @param e the event to be processed
+     * Method called by player num radio buttons
+     * Sets up players (final step in game setup)
+     * Set gamestate to PlayerToMove
+     * @param i
      */
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-    }
-
-    /**
-     * Invoked when a key has been released.
-     * See the class description for {@link KeyEvent} for a definition of
-     * a key released event.
-     *
-     * @param e the event to be processed
-     */
-    @Override
-    public void keyReleased(KeyEvent e) {
-
+    public static void setupPlayers(int i) {
+        System.out.println("Creating game with " + i + " players...");
+        Game.getGameInstance().setupPlayers(i);
+        Game.getGameInstance().setGameState(Game.GameState.PlayerToMove);
+        updateView();
     }
 }

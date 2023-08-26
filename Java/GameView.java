@@ -20,6 +20,13 @@ public class GameView extends JFrame {
 
     private GameView() {
         super("Cluedo");
+
+        try {
+            // This is set so button.setBackground works correctly
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
@@ -45,7 +52,6 @@ public class GameView extends JFrame {
 
         menuBar.add(menu);
         setJMenuBar(menuBar);
-
 
         // Layout components
         setLayout(new BorderLayout());
@@ -73,8 +79,6 @@ public class GameView extends JFrame {
         infoArea.setLayout(new BorderLayout());
         infoArea.add(infoAreaText, BorderLayout.CENTER);
         infoArea.add(contextPanel, BorderLayout.SOUTH);
-
-
 
         setVisible(true);
     }
@@ -106,6 +110,7 @@ public class GameView extends JFrame {
 
 
 
+
     // You can add methods to update the view based on changes in the game state
 
     /**
@@ -114,7 +119,12 @@ public class GameView extends JFrame {
      */
     public void updateBoard() {
         // Update the boardPanel based on the current game state
-        // TODO: Display board in GUI (get from model)
+        if (Game.getState() == Game.GameState.GameSetup) {
+            throw new IllegalStateException("Board should not be shown while still setting up");
+        }
+
+        boardPanel.removeAll();
+
         Cell[][] board = game.getBoard().getBoard();
 
         if (board==null) throw new NullPointerException("When trying to update board in view");
@@ -125,14 +135,16 @@ public class GameView extends JFrame {
         //int offset = 20;
         for(int row = 0; row<board.length;row++){
             for(int col = 0; col < board[0].length;col++){
-                //this.drawRect(col*offset,row*offset,width,height);
-                JButton cellButton = new JButton(board[row][col].getDisplayChar());
+                Cell cell = board[row][col];
+                JButton cellButton = new JButton(cell.getDisplayChar());
                 cellButton.setMargin(new Insets(0, 0 ,0, 0));
+                cellButton.setBackground(cell.getColor());
+                cellButton.setForeground(Color.BLACK); // Setting the text color to black
+                cellButton.setOpaque(true);
                 int finalRow = row;
                 int finalCol = col;
                 cellButton.addActionListener(e -> GameController.cellClicked(finalRow, finalCol));
                 buttonCellPanel.add(cellButton);
-                // TODO change getDisplayChar to return a color?
             }
         }
 
@@ -156,7 +168,28 @@ public class GameView extends JFrame {
 
     public GameView attachGame(Game game) {
         this.game = game;
-        updateBoard();
+        displaySetup();
         return this;
     }
+
+    public void displaySetup() {
+        boardPanel.removeAll();
+
+        JPanel setupPanel = new JPanel();
+        ButtonGroup playerNumRadioButtons = new ButtonGroup();
+        JRadioButton threePlayers = new JRadioButton("3 Players");
+        JRadioButton fourPlayers = new JRadioButton("4 Players");
+
+        threePlayers.addActionListener(e -> GameController.setupPlayers(3));
+        fourPlayers.addActionListener(e -> GameController.setupPlayers(4));
+
+        playerNumRadioButtons.add(threePlayers);
+        playerNumRadioButtons.add(fourPlayers);
+
+        setupPanel.add(threePlayers);
+        setupPanel.add(fourPlayers);
+
+        boardPanel.add(setupPanel);
+    }
+
 }

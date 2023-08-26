@@ -65,13 +65,11 @@ public class Player {
    * @param y
    * @return
    */
-  public boolean setPosition(int x, int y){
-    boolean wasSet = false;
+  public Player setStartPosition(int x, int y){
     prevPosition[0] = x;
     prevPosition[1] = y;
     position = prevPosition;
-    wasSet = true;
-    return wasSet;
+    return this;
   }
 
   public void addCard(Card card)

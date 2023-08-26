@@ -10,7 +10,7 @@ public class Game {
     //------------------------
 
     //Game Attributes
-    private int playerNum = 4;
+    private int playerNum;
     private int currentPlayerTurn = 0;
     private Board board;
     private List<Card> allCards;
@@ -20,35 +20,53 @@ public class Game {
     private boolean gameRunning = false;
     private boolean gameIsSetup = false;
 
+    private GameView gameView = GameView.getView();
+    private int[] currentPlayerMaxMoves;
+
+    private static GameState gameState;
+    private static Game gameInstance;
+
     enum GameState {
         PlayerToMove,
+        WaitingForPlayerToMove,
         PlayerToAttempt,
         PlayerWon,
         PlayersLost,
         GameSetup
     }
 
-    private static GameState gameState;
-
-
     //------------------------
     // CONSTRUCTOR
     //------------------------
+    public static Game getGameInstance(){
+        if (gameInstance!=null) return gameInstance;
+        gameInstance = new Game();
+        return gameInstance;
+    }
 
-    public Game() {
+    private Game() {
         if(gameState == null) gameState = GameState.GameSetup;
     }
 
-    //------------------------
-    // INTERFACE
-    //------------------------
-
-    public int getCurrentPlayerTurn() {
-        return currentPlayerTurn;
+    public int[] getCurrentMaxMoves() {
+        return currentPlayerMaxMoves;
     }
 
-    public boolean isGameRunning(){
-        return getState()==GameState.PlayerToAttempt||getState()==GameState.PlayerToMove;
+    public void performDiceRoll() {
+        this.currentPlayerMaxMoves = rollDice();
+    }
+
+    public void resetGame() {
+        gameIsSetup = false;
+        setup();
+    }
+
+    public void setGameState(GameState state){
+        gameState = state;
+    }
+
+    public int getPlayersTurnNum() {
+        return currentPlayerTurn;
     }
 
     public static GameState getState(){ return gameState;}
@@ -71,17 +89,18 @@ public class Game {
 
     /**
      * Handles setting up the game
+     * Does NOT create the players
      */
-    public void Setup() {
+    public void setup() {
         if(gameIsSetup) return;
 
         System.out.println("Setting Up Game");
         board = new Board();
 
         //Create cards
-        var weaponCards = CreateWeaponCards();
-        var characterCards = CreateCharacterCards();
-        var estateCards = CreateEstateCards();
+        List<Card> weaponCards = CreateWeaponCards();
+        List<Card> characterCards = CreateCharacterCards();
+        List<Card> estateCards = CreateEstateCards();
 
         //Get the murder cards
         Card murderWeapon = weaponCards.remove(getRandomNumber(0, weaponCards.size()));
@@ -96,32 +115,14 @@ public class Game {
         allCards.addAll(weaponCards);
         allCards.addAll(characterCards);
         allCards.addAll(estateCards);
+
         Collections.shuffle(allCards);
 
-        SetupPlayers();
         gameIsSetup = true;
+        gameState = GameState.GameSetup;
     }
 
-    public void SetupPlayers() {
-        //Get player count
-        System.out.println("How Many Players, (3 or 4)?");
-
-        try {
-            InputStreamReader isr = new InputStreamReader(System.in);
-            BufferedReader br = new BufferedReader(isr);
-
-            String in = br.readLine();
-
-            while (!(in.equals("3") | in.equals("4"))) {
-                System.out.println("(3 or 4)?");
-                in = br.readLine();
-            }
-            playerNum = Integer.parseInt(in);
-
-        } catch (IOException ioe) {
-            System.out.println("IO Exception raised With setting player count");
-        }
-
+    public void setupPlayers(int playerNum) {
         //Create players and order them for turns
         playerMap = CreatePlayers(allCards, playerNum);
 
@@ -132,7 +133,7 @@ public class Game {
     /**
      * Handles running the game
      */
-    public void Run() {
+    public void run() {
         if (gameRunning) return;
 
         gameRunning = true;
@@ -165,10 +166,6 @@ public class Game {
                     if (input.equals("Q") | input.equals("QUIT")) {
                         System.out.println("Stopping Game");
                         return;
-                    }
-                    // TODO : Remove this before release
-                    if(input.equals("MURDER")){
-                        System.out.println("The murder is: " + murderer.toString());
                     }
 
                     try {
@@ -713,28 +710,20 @@ public class Game {
      * Creates players and allocates cards to them
      */
     Map<Integer, Player> CreatePlayers(List<Card> cards, int playerNum) {
+        this.playerNum = playerNum;
+
+        if (playerNum != 3 && playerNum != 4) throw new IllegalArgumentException("Can only create 3-4 players (tried " + playerNum + ")");
+
         //Only handling 3 or 4 players case
-
-        var players = new ArrayList<Player>();
-
-        Player Lucillia = (new Player("Lucilla"));
-        Lucillia.setPosition(11, 1);
-        players.add(Lucillia);
-
-        Player Bert = (new Player("Bert"));
-        Bert.setPosition(1, 9);
-        players.add(Bert);
-
-        Player Malina = (new Player("Malina"));
-        Malina.setPosition(9, 22);
-        players.add(Malina);
-
-        Player Percy = (new Player("Percy"));
-        Percy.setPosition(22,14);
-        players.add(Percy);
+        List<Player> players = new ArrayList<>(List.of(
+                new Player("Lucilla").setStartPosition(11, 1),
+                new Player("Bert").setStartPosition(1, 9),
+                new Player("Malina").setStartPosition(9, 22),
+                new Player("Percy").setStartPosition(22, 14)
+        ));
 
         //Remove Player if only 3
-        if(playerNum==3)players.remove(3);
+        if(playerNum==3) players.remove(3);
 
         //Goes through every card
         int i = 0;
@@ -749,9 +738,6 @@ public class Game {
 
         //Turn order
         var playerMap = new HashMap<Integer, Player>();
-        //for (int p = 0; p < players.size(); p++) {
-        //   playerMap.put(p, players.get(p));
-        //}
 
         int numAdded = 0;
         int it = getRandomNumber(0,3);

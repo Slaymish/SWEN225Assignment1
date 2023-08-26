@@ -1,5 +1,7 @@
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 // line 93 "model.ump"
@@ -246,6 +248,17 @@ public class Board {
         return board[proposedY][proposedX].isWalkable();
     }
 
+    /**
+     * Checks if the place the player clicked on the GUI is a valid place to move to.
+     * @param playerNum
+     * @param row
+     * @param col
+     */
+    public boolean isMoveValidAtClick(int row, int col) {
+        return board[row][col].isWalkable();
+        // so i could use djitrka to find the shortest path, if that doesn't work, its not a valid path
+    }
+
 
     private class EmptyCell implements Cell {
         public EmptyCell() {
@@ -269,6 +282,11 @@ public class Board {
         @Override
         public String getDisplayChar() {
             return "W";
+        }
+
+        @Override
+        public Color getColor() {
+            return Color.YELLOW;
         }
     }
 

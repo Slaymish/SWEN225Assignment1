@@ -2,6 +2,8 @@
 /*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
 
 
+import java.awt.*;
+
 // line 194 "model.ump"
 // line 265 "model.ump"
 public class Person implements Cell {
@@ -45,6 +47,11 @@ public class Person implements Cell {
     @Override
     public String getDisplayChar() {
       return name.substring(0, 1);
+    }
+
+    @Override
+    public Color getColor() {
+        return Color.MAGENTA;
     }
 
     public Player getPlayer() {
