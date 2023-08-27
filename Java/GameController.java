@@ -33,9 +33,23 @@ public class GameController extends JPanel implements KeyListener, MouseListener
     public void keyPressed(KeyEvent e) {
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
+        } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Q) {
+            GameView.getView().quitGame();
+        } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
+            GameView view = GameView.getView();
+            Game game = view.getGame();
+            
+            if(game.getState() == Game.GameState.PlayerCanGuessAndSolve) {
+                guessButtonClicked();
+            }
+        } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
+            GameView view = GameView.getView();
+            Game game = view.getGame();
+            
+            if(game.getState() == Game.GameState.PlayerCanGuessAndSolve || game.getState() == Game.GameState.PlayerCanSolve) {
+                solveButtonClicked();
+            }
         }
-
-        // TODO Add more shortcuts eg: ctrl+q to quit, ctrl+g to guess, ctrl+s to solve
     }
 
     public void keyTyped(KeyEvent e) {}
