@@ -143,8 +143,6 @@ public class GameController extends JPanel implements KeyListener {
             case PlayerCanGuessAndSolve -> {
                 view.updateInfo("You can solve/guess nowww..");
                 view.setContextButtons("guess","solve");
-
-
             }
             case PlayerCanSolve -> {
                 view.updateInfo("You can solve nowww..");

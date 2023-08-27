@@ -59,6 +59,24 @@ public class Player {
   }
 
   /**
+   * Set the players positions
+   * Used when player selects to move there
+   * @param row
+   * @param col
+   * @return
+   */
+  public boolean setPositionTo(int row, int col){
+    boolean wasSet = false;
+    prevPosition = position;
+    int[] newPos = new int[2];
+    newPos[0] = col;
+    newPos[1] = row;
+    position = newPos;
+    wasSet = true;
+    return wasSet;
+  }
+
+  /**
    * Sets prevPosition AND position to the same coords
    * Used only for setting up the game
    * @param x

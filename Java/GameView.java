@@ -2,12 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GameView extends JFrame {
     private static GameView instance;
     private Game game;
     private JPanel boardPanel;
+
+    private JPanel cardPanel;
+
+    private JLabel boardTitle;
     private JPanel infoArea;
     private JTextArea infoAreaText;
     private Map<String,JButton> contextButtons = new HashMap<>();
@@ -35,6 +40,7 @@ public class GameView extends JFrame {
         boardPanel = new JPanel(); // You can customize this to display the game board
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
+        cardPanel = new JPanel();
         
 
         // JMenu
@@ -56,6 +62,7 @@ public class GameView extends JFrame {
                 System.exit(0);
             }
         });
+
         // Add a window listener to handle window close
         addWindowListener(new WindowAdapter() {
             @Override
@@ -73,6 +80,9 @@ public class GameView extends JFrame {
                 }
             }
         });
+
+        GameController gameController = new GameController();
+        this.getContentPane().add(gameController);
 
         menu.add(NewGameItem);
         menu.add(quitItem);
@@ -95,7 +105,6 @@ public class GameView extends JFrame {
         contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
         contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
 
-
         JPanel contextPanel = new JPanel();
 
         for (JButton button : contextButtons.values()) {
@@ -108,6 +117,22 @@ public class GameView extends JFrame {
         infoArea.add(contextPanel, BorderLayout.SOUTH);
 
         setVisible(true);
+
+
+        // add title to boardpanel
+        boardTitle = new JLabel();
+        boardPanel.setLayout(new BorderLayout());
+        boardPanel.add(boardTitle, BorderLayout.NORTH);
+        boardPanel.add(cardPanel, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Sets the board title.
+     * @param title
+     */
+    public void setBoardTitle(String title){
+        boardTitle.setText(title);
+        boardPanel.revalidate();
     }
 
     /**
@@ -149,9 +174,6 @@ public class GameView extends JFrame {
        return this;
     }
 
-
-
-
     // You can add methods to update the view based on changes in the game state
 
     /**
@@ -176,7 +198,9 @@ public class GameView extends JFrame {
         //int offset = 20;
         for(int row = 0; row<board.length;row++){
             for(int col = 0; col < board[0].length;col++){
+                // TODO: Change buttons to paint (use mouselistener in controller)
                 Cell cell = board[row][col];
+                /*
                 JButton cellButton = new JButton(cell.getDisplayChar());
                 cellButton.setMargin(new Insets(0, 0 ,0, 0));
                 cellButton.setBackground(cell.getColor());
@@ -186,12 +210,14 @@ public class GameView extends JFrame {
                 int finalCol = col;
                 cellButton.addActionListener(e -> GameController.cellClicked(finalRow, finalCol));
                 buttonCellPanel.add(cellButton);
+                 */
             }
         }
 
         buttonCellPanel.setPreferredSize(new Dimension(500,500));
         buttonCellPanel.setBackground(new Color(255,0,0));
-        boardPanel.add(buttonCellPanel);
+        boardPanel.add(buttonCellPanel,BorderLayout.CENTER);
+        boardPanel.add(boardTitle,BorderLayout.NORTH);
 
         boardPanel.revalidate();
         repaint();
@@ -233,4 +259,13 @@ public class GameView extends JFrame {
         boardPanel.add(setupPanel);
     }
 
+    public void showPlayersCards(List<Card> playersCards) {
+        cardPanel = new JPanel();
+        cardPanel.setLayout(new GridLayout(1, playersCards.size()));
+        for (Card card : playersCards) {
+            cardPanel.add(new JLabel(card.getCardName()));
+        }
+        boardPanel.add(cardPanel, BorderLayout.SOUTH);
+        boardPanel.revalidate();
+    }
 }

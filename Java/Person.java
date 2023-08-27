@@ -1,11 +1,5 @@
-/*PLEASE DO NOT EDIT THIS CODE*/
-/*This code was generated using the UMPLE 1.32.1.6535.66c005ced modeling language!*/
-
-
 import java.awt.*;
 
-// line 194 "model.ump"
-// line 265 "model.ump"
 public class Person implements Cell {
 
   //------------------------
@@ -51,7 +45,7 @@ public class Person implements Cell {
 
     @Override
     public Color getColor() {
-        return Color.MAGENTA;
+      return Game.getGameInstance().getCurrentPlayer().equals(this.player)? Color.GREEN : Color.RED;
     }
 
     public Player getPlayer() {
