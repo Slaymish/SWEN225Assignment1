@@ -24,6 +24,10 @@ public class GameView extends JFrame {
         return instance;
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     private GameView() {
         super("Cluedo");
 
