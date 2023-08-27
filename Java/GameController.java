@@ -38,7 +38,10 @@ public class GameController extends JPanel implements KeyListener {
 
     public static void guessButtonClicked() {
         System.out.println("Player guessed");
-        // TODO: Implement guessing (in model)
+
+        Solve_GuessAttempts gAttempt = new Solve_GuessAttempts();
+        gAttempt.TryGuess(Game.getGameInstance().currentPlayerInEstate().get().name);
+
         // Temporarily adds a guess to the info area
         GameView.getView().updateInfo("Player guessed");
         // and just testing the context buttons
@@ -47,7 +50,10 @@ public class GameController extends JPanel implements KeyListener {
 
     public static void solveButtonClicked() {
         System.out.println("Solve Button");
-        // TODO: Implement solve (in model)
+
+        Solve_GuessAttempts gAttempt = new Solve_GuessAttempts();
+        gAttempt.TrySolve();
+
         // Temporarily adds a solve to the info area
         GameView.getView().updateInfo("Player solved");
         // and just testing the context buttons
