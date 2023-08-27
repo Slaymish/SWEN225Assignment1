@@ -23,6 +23,13 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         return instance;
     }
 
+    public static void endTurnClicked() {
+        System.out.println("End turn clicked");
+        Game.getGameInstance().nextPlayerTurn();
+        Game.getGameInstance().setGameState(Game.GameState.PlayerToMove);
+        updateView();
+    }
+
     public void keyPressed(KeyEvent e) {
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
@@ -158,11 +165,11 @@ public class GameController extends JPanel implements KeyListener, MouseListener
             }
             case PlayerCanGuessAndSolve -> {
                 view.updateInfo("You can solve/guess nowww..");
-                view.setContextButtons("guess","solve");
+                view.setContextButtons("guess","solve","end turn");
             }
             case PlayerCanSolve -> {
                 view.updateInfo("You can solve nowww..");
-                view.setContextButtons("solve");
+                view.setContextButtons("solve","end turn");
             }
             default -> throw new IllegalStateException("This shouldn't happen!");
         }

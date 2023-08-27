@@ -80,6 +80,9 @@ public class Solve_GuessAttempts {
             }
             revalidate();
 
+            boolean guess = false; // TODO check if guess is correct
+
+            Game.getGameInstance().guessMade(guess);
         }
 
         boolean containsCard(Card c){
@@ -107,7 +110,7 @@ public class Solve_GuessAttempts {
             String[] estates = {"Haunted House","Manic Manor","Visitation Villa","Calamity Castle","Peril Palace"};
             estate = new JComboBox(estates);
 
-            JButton confirm = new JButton("Guess");
+            JButton confirm = new JButton("Solve");
             confirm.addActionListener(e -> ConfirmPressed());
 
             this.setLayout(new GridBagLayout());
@@ -125,16 +128,15 @@ public class Solve_GuessAttempts {
         void ConfirmPressed(){
             Game g = Game.getGameInstance();
 
-            boolean guess = g.getMurderer().checkMurderer(
+            boolean solve = g.getMurderer().checkMurderer(
                     g.getCardByName((String)weapon.getSelectedItem()),
                     g.getCardByName((String)estate.getSelectedItem()),
                     g.getCardByName((String)person.getSelectedItem())
             );
-            System.out.println(guess);
-
+            System.out.println(solve);
+            // TODO: change state if guess is correct/wrong
+            Game.getGameInstance().solveMade(solve);
+            this.dispose();
         }
     }
-
-
-
 }
