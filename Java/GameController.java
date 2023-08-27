@@ -8,10 +8,19 @@ import java.util.Optional;
 import javax.swing.JPanel;
 
 public class GameController extends JPanel implements KeyListener, MouseListener {
-    public GameController() {
+    private static GameController instance;
+
+    private GameController() {
         System.out.println("GameController created");
         addKeyListener(this);
         setFocusable(true);
+    }
+
+    public static GameController getController() {
+        if (instance == null) {
+            instance = new GameController();
+        }
+        return instance;
     }
 
     public void keyPressed(KeyEvent e) {

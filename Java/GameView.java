@@ -47,7 +47,6 @@ public class GameView extends JFrame {
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
         cardPanel = new JPanel();
-        
 
         // JMenu
         JMenuBar menuBar = new JMenuBar();
@@ -87,8 +86,8 @@ public class GameView extends JFrame {
             }
         });
 
-        GameController gameController = new GameController();
-        this.getContentPane().add(gameController);
+        GameController gameController = GameController.getController();
+        this.addKeyListener(gameController);
 
         menu.add(NewGameItem);
         menu.add(quitItem);
@@ -213,7 +212,6 @@ public class GameView extends JFrame {
         }
 
         buttonCellPanel.setPreferredSize(new Dimension(500,500));
-        buttonCellPanel.setBackground(new Color(255,0,0));
         boardPanel.add(buttonCellPanel,BorderLayout.CENTER);
         boardPanel.add(boardTitle,BorderLayout.NORTH);
 
