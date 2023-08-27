@@ -26,6 +26,31 @@ public class Game {
     private static GameState gameState;
     private static Game gameInstance;
 
+    /**
+     * Run when guess is submitted
+     * guess is true if player choose correctly
+     * @param guess
+     */
+    public void guessMade(boolean guess) {
+        if(!guess){
+            System.out.println("Wrong guess!");
+            GameView.getView().updateInfo("guess wrong");
+        }
+    }
+
+    /**
+     * Handle submitted solve.
+     * True when solves correct
+     * @param solve
+     */
+    public void solveMade(boolean solve) {
+        if(!solve){
+            System.out.println("Wrong solve!");
+            GameView.getView().updateInfo("solve wrong");
+        }
+
+    }
+
     enum GameState {
         PlayerToMove,
         WaitingForPlayerToMove,

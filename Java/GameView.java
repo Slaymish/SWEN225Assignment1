@@ -87,7 +87,7 @@ public class GameView extends JFrame {
         });
 
         GameController gameController = GameController.getController();
-        this.addKeyListener(gameController);
+        this.getContentPane().addKeyListener(gameController);
 
         menu.add(NewGameItem);
         menu.add(quitItem);
@@ -104,11 +104,13 @@ public class GameView extends JFrame {
         contextButtons.put("roll", new JButton("Roll Dice"));
         contextButtons.put("guess", new JButton("Guess Murder"));
         contextButtons.put("solve", new JButton("Solve Attempt"));
+        contextButtons.put("end turn", new JButton("End Turn"));
 
         // Add action listeners
         contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
         contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
         contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
+        contextButtons.get("end turn").addActionListener(e -> GameController.endTurnClicked());
 
         JPanel contextPanel = new JPanel();
 
