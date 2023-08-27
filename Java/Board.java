@@ -272,10 +272,7 @@ public class Board {
         int[] startCell = Game.getGameInstance().getCurrentPlayer().position; // x,y
         int[] endCell = {col,row};
 
-        System.out.println("Start cell: " + Arrays.toString(startCell));
-        System.out.println("End cell: " + Arrays.toString(endCell));
-        System.out.println("Max moves: " + maxMoves);
-        System.out.println("Shortest distance: " + getShortestDistanceBetweenCells(startCell,endCell));
+        System.out.println("distance: " + getShortestDistanceBetweenCells(startCell,endCell));
 
         return getShortestDistanceBetweenCells(startCell,endCell)<=maxMoves;
     }
@@ -328,10 +325,6 @@ public class Board {
 
         return -1; // Return -1 if there is no path
     }
-
-
-
-
 
     private class EmptyCell implements Cell {
         public EmptyCell() {

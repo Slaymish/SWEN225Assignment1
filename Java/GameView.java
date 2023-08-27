@@ -37,11 +37,16 @@ public class GameView extends JFrame {
         setSize(800, 600);
 
         // Initialize components
-        boardPanel = new JPanel(); // You can customize this to display the game board
+        boardPanel = new JPanel(){
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                updateBoard(g);
+            }
+        }; // You can customize this to display the game board
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
         cardPanel = new JPanel();
-        
 
         // JMenu
         JMenuBar menuBar = new JMenuBar();
@@ -81,8 +86,8 @@ public class GameView extends JFrame {
             }
         });
 
-        GameController gameController = new GameController();
-        this.getContentPane().add(gameController);
+        GameController gameController = GameController.getController();
+        this.addKeyListener(gameController);
 
         menu.add(NewGameItem);
         menu.add(quitItem);
@@ -100,7 +105,7 @@ public class GameView extends JFrame {
         contextButtons.put("guess", new JButton("Guess Murder"));
         contextButtons.put("solve", new JButton("Solve Attempt"));
 
-        // Add action listeners (you'll need to define these in your controller)
+        // Add action listeners
         contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
         contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
         contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
@@ -116,14 +121,17 @@ public class GameView extends JFrame {
         infoArea.add(infoAreaText, BorderLayout.CENTER);
         infoArea.add(contextPanel, BorderLayout.SOUTH);
 
-        setVisible(true);
-
-
         // add title to boardpanel
         boardTitle = new JLabel();
         boardPanel.setLayout(new BorderLayout());
         boardPanel.add(boardTitle, BorderLayout.NORTH);
         boardPanel.add(cardPanel, BorderLayout.SOUTH);
+
+
+        // Add the mouse listener to the boardPanel
+        boardPanel.addMouseListener(gameController);
+
+        setVisible(true);
     }
 
     /**
@@ -180,42 +188,30 @@ public class GameView extends JFrame {
      * Update the boardPanel based on the current game state
      * (center panel)
      */
-    public void updateBoard() {
+    public void updateBoard(Graphics g) {
         // Update the boardPanel based on the current game state
-        if (Game.getState() == Game.GameState.GameSetup) {
-            throw new IllegalStateException("Board should not be shown while still setting up");
-        }
+        if (Game.getState() == Game.GameState.GameSetup) {return;}
 
         boardPanel.removeAll();
 
-        Cell[][] board = game.getBoard().getBoard();
+        Cell[][] board = Game.getGameInstance().getBoard().getBoard();
 
         if (board==null) throw new NullPointerException("When trying to update board in view");
 
         JPanel buttonCellPanel = new JPanel();
         buttonCellPanel.setLayout(new GridLayout(board.length,board.length));
 
-        //int offset = 20;
+        int offset = 20;
         for(int row = 0; row<board.length;row++){
             for(int col = 0; col < board[0].length;col++){
-                // TODO: Change buttons to paint (use mouselistener in controller)
+                // TODO: use mouselistener in controller
                 Cell cell = board[row][col];
-                /*
-                JButton cellButton = new JButton(cell.getDisplayChar());
-                cellButton.setMargin(new Insets(0, 0 ,0, 0));
-                cellButton.setBackground(cell.getColor());
-                cellButton.setForeground(Color.BLACK); // Setting the text color to black
-                cellButton.setOpaque(true);
-                int finalRow = row;
-                int finalCol = col;
-                cellButton.addActionListener(e -> GameController.cellClicked(finalRow, finalCol));
-                buttonCellPanel.add(cellButton);
-                 */
+                g.setColor(cell.getColor());
+                g.fillRect(col*offset,row*offset,offset,offset);
             }
         }
 
         buttonCellPanel.setPreferredSize(new Dimension(500,500));
-        buttonCellPanel.setBackground(new Color(255,0,0));
         boardPanel.add(buttonCellPanel,BorderLayout.CENTER);
         boardPanel.add(boardTitle,BorderLayout.NORTH);
 
@@ -267,5 +263,9 @@ public class GameView extends JFrame {
         }
         boardPanel.add(cardPanel, BorderLayout.SOUTH);
         boardPanel.revalidate();
+    }
+
+    public void repaintBoard() {
+        boardPanel.repaint();
     }
 }

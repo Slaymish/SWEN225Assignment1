@@ -1,21 +1,34 @@
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import javax.swing.JPanel;
 
-public class GameController extends JPanel implements KeyListener {
-    public GameController() {
+public class GameController extends JPanel implements KeyListener, MouseListener {
+    private static GameController instance;
+
+    private GameController() {
         System.out.println("GameController created");
         addKeyListener(this);
         setFocusable(true);
+    }
+
+    public static GameController getController() {
+        if (instance == null) {
+            instance = new GameController();
+        }
+        return instance;
     }
 
     public void keyPressed(KeyEvent e) {
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
         }
+
+        // TODO Add more shortcuts eg: ctrl+q to quit, ctrl+g to guess, ctrl+s to solve
     }
 
     public void keyTyped(KeyEvent e) {}
@@ -101,11 +114,11 @@ public class GameController extends JPanel implements KeyListener {
                     System.out.println("Not in an estate!");
                 }
 
-                GameView.getView().updateBoard();
+                GameView.getView().repaintBoard();
                 updateView();
             }
             default -> {
-                GameView.getView().updateInfo("Not time to move!!");
+                GameView.getView().updateInfo("Not time to move!! (wrong state)");
             }
         }
     }
@@ -122,7 +135,7 @@ public class GameController extends JPanel implements KeyListener {
 
         switch (Game.getState()){
             case PlayerToMove -> {
-                view.updateBoard();
+                view.repaintBoard();
                 view.updateInfo("Player To move..");
                 view.setContextButtons("roll");
                 updateToCurrentPlayer();
@@ -139,7 +152,10 @@ public class GameController extends JPanel implements KeyListener {
                 view.displaySetup();
             }
             case PlayerWon -> view.updateInfo("Player has won!");
-            case PlayersLost -> view.updateInfo("You all lost!!");
+            case PlayersLost -> {
+                // TODO: Change to this state when EVERYONE loses
+                view.updateInfo("You all lost!!");
+            }
             case PlayerCanGuessAndSolve -> {
                 view.updateInfo("You can solve/guess nowww..");
                 view.setContextButtons("guess","solve");
@@ -173,5 +189,61 @@ public class GameController extends JPanel implements KeyListener {
         Game.getGameInstance().setupPlayers(i);
         Game.getGameInstance().setGameState(Game.GameState.PlayerToMove);
         updateView();
+    }
+
+    /**
+     * Invoked when the mouse button has been clicked (pressed
+     * and released) on a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // TODO: Implement mouse clicking on board
+        // Get the row/col of the click
+        int row = e.getY()/20;
+        int col = e.getX()/20;
+        System.out.println("Clicked on row: " + row + " col: " + col);
+        cellClicked(row,col);
+    }
+
+    /**
+     * Invoked when a mouse button has been pressed on a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    /**
+     * Invoked when a mouse button has been released on a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    /**
+     * Invoked when the mouse enters a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    /**
+     * Invoked when the mouse exits a component.
+     *
+     * @param e the event to be processed
+     */
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
