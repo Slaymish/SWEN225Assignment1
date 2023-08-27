@@ -189,23 +189,24 @@ public class Game {
                     }
                 }
 
-                // TODO : Test Door work (they should now)
-                playerMap.get(currentPlayerTurn).setPositionWithOffset(moveBy[0], moveBy[1]);
-                board.updatePeopleOnBoard(); 
-
-                if (currentPlayerInEstate()) {
-                    Estate estate = getBoard().getEstateList().stream()
-                            .filter(e -> e.playerIsInside(getCurrentPlayer().getPosition()[0], getCurrentPlayer().getPosition()[1]))
-                            .findAny().get();
-                    System.out.println("You are in " + ConsoleCommands.inBlue(estate.name));
-                    handleAttempt(estate);
-                }
             } catch (IOException ioe) {
                 System.out.println("IO Exception raised With Move Input");
             }
 
-            NextPlayerTurn();
+            nextPlayerTurn();
         }
+    }
+
+    /**
+     * Move the current player to the specified row/col
+     * Only call AFTER checking if valid
+     * @param row
+     * @param col
+     * @throws IOException
+     */
+    public void moveCurrentPlayerTo(int row, int col) throws IOException {
+        playerMap.get(currentPlayerTurn).setPositionTo(row,col);
+        board.updatePeopleOnBoard();
     }
 
     /**
@@ -213,7 +214,7 @@ public class Game {
      *
      * @return
      */
-    private boolean currentPlayerInEstate() {
+    public Optional<Estate> currentPlayerInEstate() {
         Player currentPlayer = playerMap.get(currentPlayerTurn);
         int[] currentPlayerPosition = currentPlayer.getPosition();
         int x = currentPlayerPosition[0];
@@ -224,7 +225,7 @@ public class Game {
                 .filter(estate -> estate.playerIsInside(x, y))
                 .findAny();
 
-        return estateOptional.isPresent();
+        return estateOptional;
     }
 
     /**
@@ -773,7 +774,7 @@ public class Game {
     /**
      * Sets to next player turn
      */
-    private void NextPlayerTurn() {
+    public void nextPlayerTurn() {
         System.out.println("End turn");
         currentPlayerTurn++;
         if (currentPlayerTurn >= playerNum) currentPlayerTurn = 0;

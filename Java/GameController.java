@@ -2,6 +2,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.util.Optional;
 
 public class GameController {
     public GameController() {
@@ -62,7 +64,23 @@ public class GameController {
                 boolean canMoveThere = Game.getGameInstance().getBoard().isMoveValidAtClick(row,col);
                 if(canMoveThere){
                     System.out.println("Move player to " + Board.getBoard()[row][col]);
-                    // TODO: do something here.. (move player)
+                    try {
+                        Game.getGameInstance().moveCurrentPlayerTo(row,col);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    Optional<Estate> inEstate = Game.getGameInstance().currentPlayerInEstate();
+                    if(inEstate.isPresent()){
+                        Game.getGameInstance().setGameState(Game.GameState.PlayerToAttempt);
+                        System.out.println("You are in " + inEstate.get().name);
+                    }
+                    else{
+                        System.out.println("Not in an estate!");
+                    }
+
+                    updateView();
+
                 }
                 else{
                     GameView.getView().updateInfo("Can't move there!");

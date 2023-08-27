@@ -1,5 +1,6 @@
 
 import java.awt.*;
+import java.awt.desktop.QuitEvent;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -250,14 +251,86 @@ public class Board {
 
     /**
      * Checks if the place the player clicked on the GUI is a valid place to move to.
-     * @param playerNum
      * @param row
      * @param col
      */
     public boolean isMoveValidAtClick(int row, int col) {
-        return board[row][col].isWalkable();
-        // so i could use djitrka to find the shortest path, if that doesn't work, its not a valid path
+        return board[row][col].isWalkable() && playerHasSufficientMoves(row,col);
     }
+
+    /**
+     * Finds shortest path between players pos and target pos
+     * Return true if under max moves (from dice)
+     * @param row
+     * @param col
+     * @return
+     */
+    private boolean playerHasSufficientMoves(int row, int col) {
+        int[] diceRoll = Game.getGameInstance().getCurrentMaxMoves();
+        int maxMoves = diceRoll[0]+diceRoll[1];
+
+        int[] startCell = Game.getGameInstance().getCurrentPlayer().position; // x,y
+        int[] endCell = {col,row};
+
+        System.out.println("Start cell: " + Arrays.toString(startCell));
+        System.out.println("End cell: " + Arrays.toString(endCell));
+        System.out.println("Max moves: " + maxMoves);
+        System.out.println("Shortest distance: " + getShortestDistanceBetweenCells(startCell,endCell));
+
+        return getShortestDistanceBetweenCells(startCell,endCell)<=maxMoves;
+    }
+
+    /**
+     * Uses BFS to find the shortest distance between two cells
+     * @param startCell
+     * @param endCell
+     * @return
+     */
+    public static int getShortestDistanceBetweenCells(int[] startCell, int[] endCell) {
+        Queue<int[]> queue = new LinkedList<>();
+        boolean[][] visited = new boolean[BoardHeight][BoardWidth];
+        int[][] distance = new int[BoardHeight][BoardWidth];
+
+        for (int[] row : distance) {
+            Arrays.fill(row, Integer.MAX_VALUE);
+        }
+
+        distance[startCell[0]][startCell[1]] = 0;
+        queue.offer(new int[]{startCell[0], startCell[1]});
+        visited[startCell[0]][startCell[1]] = true;
+
+        int[][] directions = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}}; // right, down, left, up
+
+        while (!queue.isEmpty()) {
+            int[] currCell = queue.poll();
+
+            if (currCell[0] == endCell[0] && currCell[1] == endCell[1]) {
+                return distance[currCell[0]][currCell[1]];
+            }
+
+            for (int[] dir : directions) {
+                int newRow = currCell[0] + dir[0];
+                int newCol = currCell[1] + dir[1];
+
+                if (newRow >= 0 && newRow < BoardHeight && newCol >= 0 && newCol < BoardWidth) {
+                    if (!visited[newRow][newCol] && board[newRow][newCol].isWalkable()) {
+                        int newDist = distance[currCell[0]][currCell[1]] + 1;
+
+                        if (newDist < distance[newRow][newCol]) {
+                            distance[newRow][newCol] = newDist;
+                            queue.offer(new int[]{newRow, newCol});
+                            visited[newRow][newCol] = true; // Mark as visited
+                        }
+                    }
+                }
+            }
+        }
+
+        return -1; // Return -1 if there is no path
+    }
+
+
+
 
 
     private class EmptyCell implements Cell {
