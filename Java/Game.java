@@ -29,7 +29,8 @@ public class Game {
     enum GameState {
         PlayerToMove,
         WaitingForPlayerToMove,
-        PlayerToAttempt,
+        PlayerCanSolve,
+        PlayerCanGuessAndSolve,
         PlayerWon,
         PlayersLost,
         GameSetup
@@ -205,6 +206,8 @@ public class Game {
      * @throws IOException
      */
     public void moveCurrentPlayerTo(int row, int col) throws IOException {
+        System.out.println("Moving player to " + row + "," + col);
+        System.out.println("moving " +getCurrentPlayer().getName());
         playerMap.get(currentPlayerTurn).setPositionTo(row,col);
         board.updatePeopleOnBoard();
     }
