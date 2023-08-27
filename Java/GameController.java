@@ -3,11 +3,26 @@ import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.JPanel;
 
-public class GameController {
+public class GameController extends JPanel implements KeyListener {
     public GameController() {
         System.out.println("GameController created");
+        addKeyListener(this);
+        setFocusable(true);
     }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
+            createNewGame();
+        }
+    }
+
+    public void keyTyped(KeyEvent e) {}
+
+    public void keyReleased(KeyEvent e) {}
+
+
 
     /**
      * Performs dice roll.
@@ -88,6 +103,10 @@ public class GameController {
             }
         }
     }
+
+    /**
+     * shortcuts
+     */
 
     /**
      * Update the GUI's view based on the gameState

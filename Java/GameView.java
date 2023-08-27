@@ -81,6 +81,9 @@ public class GameView extends JFrame {
             }
         });
 
+        GameController gameController = new GameController();
+        this.getContentPane().add(gameController);
+
         menu.add(NewGameItem);
         menu.add(quitItem);
 
