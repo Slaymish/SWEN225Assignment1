@@ -111,12 +111,17 @@ public class GameView extends JFrame {
         contextButtons.put("guess", new JButton("Guess Murder"));
         contextButtons.put("solve", new JButton("Solve Attempt"));
         contextButtons.put("end turn", new JButton("End Turn"));
+        contextButtons.put("new game", new JButton("New Game"));
+        contextButtons.put("quit", new JButton("Quit"));
+
 
         // Add action listeners
         contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
         contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
         contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
         contextButtons.get("end turn").addActionListener(e -> GameController.endTurnClicked());
+        contextButtons.get("new game").addActionListener(e -> GameController.createNewGame());
+        contextButtons.get("quit").addActionListener(e -> GameController.quitGame());
 
         JPanel contextPanel = new JPanel();
 
@@ -223,10 +228,10 @@ public class GameView extends JFrame {
         int offset = 20;
         for(int row = 0; row<board.length;row++){
             for(int col = 0; col < board[0].length;col++){
-                // TODO: use mouselistener in controller
                 Cell cell = board[row][col];
                 g.setColor(cell.getColor());
                 g.fillRect(col*offset,row*offset,offset,offset);
+                // TODO change the paint method to be for the button panel instead of the board panel
             }
         }
 
