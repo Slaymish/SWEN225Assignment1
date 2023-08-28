@@ -11,10 +11,18 @@ import javax.swing.JPanel;
 public class GameController implements KeyListener, MouseListener {
     private static GameController instance;
 
+    /**
+     * Private constructor for initializing the GameController.
+     */
     private GameController() {
         System.out.println("GameController created");
     }
 
+    /**
+     * Retrieves the singleton instance of the GameController class.
+     *
+     * @return The singleton instance of the GameController class.
+     */
     public static GameController getController() {
         if (instance == null) {
             instance = new GameController();
@@ -22,6 +30,9 @@ public class GameController implements KeyListener, MouseListener {
         return instance;
     }
 
+    /**
+     * Handles the logic when the "End Turn" button is clicked.
+     */
     public static void endTurnClicked() {
         System.out.println("End turn clicked");
         Game.getGameInstance().nextPlayerTurn();
@@ -31,6 +42,11 @@ public class GameController implements KeyListener, MouseListener {
         updateView();
     }
 
+    /**
+     * Performs actions when a key is pressed.
+     *
+     * @param e The KeyEvent object representing the key press event.
+     */
     public void keyPressed(KeyEvent e) {
         System.out.println("Key pressed: " + e.getKeyCode());
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
@@ -54,8 +70,18 @@ public class GameController implements KeyListener, MouseListener {
         }
     }
 
+    /**
+     * Invoked when a key is typed.
+     *
+     * @param e The KeyEvent object representing the key typed event.
+     */
     public void keyTyped(KeyEvent e) {}
 
+    /**
+     * Invoked when a key is released.
+     *
+     * @param e The KeyEvent object representing the key release event.
+     */
     public void keyReleased(KeyEvent e) {}
 
 
@@ -72,6 +98,9 @@ public class GameController implements KeyListener, MouseListener {
         updateView();
     }
 
+    /**
+     * Handles the logic when the "Guess" button is clicked.
+     */
     public static void guessButtonClicked() {
         System.out.println("Player guessed");
         Game.getGameInstance().currentPlayerGuessed();
@@ -85,6 +114,9 @@ public class GameController implements KeyListener, MouseListener {
         GameView.getView().setContextButtons("roll");
     }
 
+    /**
+     * Handles the logic when the "Solve" button is clicked.
+     */
     public static void solveButtonClicked() {
         System.out.println("Solve Button");
 
@@ -97,12 +129,19 @@ public class GameController implements KeyListener, MouseListener {
         GameView.getView().setContextButtons("roll");
     }
 
+    /**
+     * Handles the logic for creating a new game.
+     */
     public static void createNewGame() {
         System.out.println("New Game");
         Game.getGameInstance().resetGame();
         updateView();
     }
 
+    /**
+     * Handles the logic for quitting the game.
+     * Prints Quit Game and then exits.
+     */
     public static void quitGame() {
         System.out.println("Quit Game");
         System.exit(0);
@@ -197,7 +236,9 @@ public class GameController implements KeyListener, MouseListener {
         }
     }
 
-
+    /**
+     * Updates the GUI to display the current player's information.
+     */
     private static void updateToCurrentPlayer(){
         String name = Game.getGameInstance().getCurrentPlayer().getName();
         GameView.getView().setBoardTitle("It is " + name + "'s turn");
