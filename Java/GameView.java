@@ -38,7 +38,7 @@ public class GameView extends JFrame {
             e.printStackTrace();
         }
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 600);
 
         // Initialize components
         boardPanel = new JPanel(){
@@ -90,6 +90,8 @@ public class GameView extends JFrame {
             }
         });
 
+
+
         GameController gameController = GameController.getController();
         this.getContentPane().addKeyListener(gameController);
 
@@ -139,6 +141,10 @@ public class GameView extends JFrame {
 
         setVisible(true);
     }
+    public static void quitGame(){
+        System.out.println("Not IOM");
+        throw new UnsupportedOperationException("Not implemented");
+    }
 
     /**
      * Sets the board title.
@@ -178,13 +184,20 @@ public class GameView extends JFrame {
                    break;
                case "guess":
                    but.setToolTipText("Click to make a guess about the murder.");
+
+                   //Override, disables if has guessed this turn
+                   but.setEnabled(!Game.getGameInstance().getIfCurrentPLayerGuessed());
                    break;
                case "solve":
                    but.setToolTipText("Click to attempt to solve the mystery.");
+
+                   //Override, disables solve button if current player has already tried to solve
+                   but.setEnabled(!Game.getGameInstance().getCurrentPlayer().getHasGuessed());
                    break;
                // Add more cases and tooltips for other buttons as needed
            }
        }
+
        return this;
     }
 

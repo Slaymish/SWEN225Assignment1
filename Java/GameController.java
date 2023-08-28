@@ -27,6 +27,8 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         System.out.println("End turn clicked");
         Game.getGameInstance().nextPlayerTurn();
         Game.getGameInstance().setGameState(Game.GameState.PlayerToMove);
+        Game.getGameInstance().resetPlayerGuessed();
+
         updateView();
     }
 
@@ -38,14 +40,14 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
             GameView view = GameView.getView();
             Game game = view.getGame();
-            
+
             if(game.getState() == Game.GameState.PlayerCanGuessAndSolve) {
                 guessButtonClicked();
             }
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
             GameView view = GameView.getView();
             Game game = view.getGame();
-            
+
             if(game.getState() == Game.GameState.PlayerCanGuessAndSolve || game.getState() == Game.GameState.PlayerCanSolve) {
                 solveButtonClicked();
             }
@@ -72,9 +74,10 @@ public class GameController extends JPanel implements KeyListener, MouseListener
 
     public static void guessButtonClicked() {
         System.out.println("Player guessed");
+        Game.getGameInstance().currentPlayerGuessed();
 
         Solve_GuessAttempts gAttempt = new Solve_GuessAttempts();
-        gAttempt.TryGuess(Game.getGameInstance().currentPlayerInEstate().get().name);
+        gAttempt.TryGuess(Game.getGameInstance().currentPlayerInEstate().get().name,Game.getGameInstance().getCurrentPlayer());
 
         // Temporarily adds a guess to the info area
         GameView.getView().updateInfo("Player guessed");
@@ -86,7 +89,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         System.out.println("Solve Button");
 
         Solve_GuessAttempts gAttempt = new Solve_GuessAttempts();
-        gAttempt.TrySolve();
+        gAttempt.TrySolve(Game.getGameInstance().getCurrentPlayer());
 
         // Temporarily adds a solve to the info area
         GameView.getView().updateInfo("Player solved");
@@ -171,6 +174,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
                 view.updateInfo("Game setting up...");
                 view.setContextButtons();
                 view.displaySetup();
+                Game.getGameInstance().resetPlayerGuessed();
             }
             case PlayerWon -> view.updateInfo("Player has won!");
             case PlayersLost -> {

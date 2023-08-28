@@ -26,6 +26,18 @@ public class Game {
     private static GameState gameState;
     private static Game gameInstance;
 
+    private boolean currentPlayerHasGuessedOnTurn = false;
+
+    public void currentPlayerGuessed(){
+        currentPlayerHasGuessedOnTurn = true;
+    }
+    public void resetPlayerGuessed(){
+        currentPlayerHasGuessedOnTurn = false;
+    }
+    public boolean getIfCurrentPLayerGuessed(){
+        return currentPlayerHasGuessedOnTurn;
+    }
+
     /**
      * Run when guess is submitted
      * guess is true if player choose correctly
@@ -146,6 +158,8 @@ public class Game {
 
         gameIsSetup = true;
         gameState = GameState.GameSetup;
+
+        resetPlayerGuessed();
     }
 
     public void setupPlayers(int playerNum) {
