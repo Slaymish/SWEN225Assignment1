@@ -10,8 +10,6 @@ public class GameView extends JFrame {
     private Game game;
     private JPanel boardPanel;
 
-    private JPanel boardCellsPanel;
-
     private JPanel cardPanel;
 
     private JLabel boardTitle;
@@ -19,11 +17,6 @@ public class GameView extends JFrame {
     private JTextArea infoAreaText;
     private Map<String,JButton> contextButtons = new HashMap<>();
 
-    /**
-     * Retrieves the singleton instance of the GameView class.
-     *
-     * @return The singleton instance of the GameView class.
-     */
     public static GameView getView() {
         if (instance == null) {
             instance = new GameView();
@@ -31,18 +24,10 @@ public class GameView extends JFrame {
         return instance;
     }
 
-    /**
-     * Retrieves the current game instance.
-     *
-     * @return The current Game instance.
-     */
     public Game getGame() {
         return game;
     }
 
-    /**
-     * Private constructor for initializing the GameView.
-     */
     private GameView() {
         super("Cluedo");
 
@@ -56,18 +41,16 @@ public class GameView extends JFrame {
         setSize(1000, 600);
 
         // Initialize components
-        boardPanel = new JPanel(); // You can customize this to display the game board
-        infoArea = new JPanel(); // You can use this to display player information or game messages
-        infoAreaText = new JTextArea();
-        infoAreaText.setEditable(false);
-        cardPanel = new JPanel();
-        boardCellsPanel = new JPanel(){
+        boardPanel = new JPanel(){
             @Override
             public void paint(Graphics g) {
                 super.paint(g);
-                drawBoard(g);
+                updateBoard(g);
             }
-        };
+        }; // You can customize this to display the game board
+        infoArea = new JPanel(); // You can use this to display player information or game messages
+        infoAreaText = new JTextArea();
+        cardPanel = new JPanel();
 
         // JMenu
         JMenuBar menuBar = new JMenuBar();
@@ -93,9 +76,24 @@ public class GameView extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                confirmQuit();
+                int result = JOptionPane.showConfirmDialog(
+                        GameView.this,
+                        "Are you sure you want to quit the game?",
+                        "Confirm Quit",
+                        JOptionPane.YES_NO_OPTION
+                );	
+                if (result == JOptionPane.YES_OPTION) {
+                    System.exit(0);
+                } else {
+                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent window from closing
+                }
             }
         });
+
+
+
+        GameController gameController = GameController.getController();
+        this.getContentPane().addKeyListener(gameController);
 
         menu.add(NewGameItem);
         menu.add(quitItem);
@@ -108,7 +106,17 @@ public class GameView extends JFrame {
         add(boardPanel, BorderLayout.WEST);
         add(infoArea, BorderLayout.EAST);
 
-        initializeContextButtons();
+        // add context buttons
+        contextButtons.put("roll", new JButton("Roll Dice"));
+        contextButtons.put("guess", new JButton("Guess Murder"));
+        contextButtons.put("solve", new JButton("Solve Attempt"));
+        contextButtons.put("end turn", new JButton("End Turn"));
+
+        // Add action listeners
+        contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
+        contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
+        contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
+        contextButtons.get("end turn").addActionListener(e -> GameController.endTurnClicked());
 
         JPanel contextPanel = new JPanel();
 
@@ -124,51 +132,18 @@ public class GameView extends JFrame {
         // add title to boardpanel
         boardTitle = new JLabel();
         boardPanel.setLayout(new BorderLayout());
+        boardPanel.add(boardTitle, BorderLayout.NORTH);
+        boardPanel.add(cardPanel, BorderLayout.SOUTH);
 
-        setVisible(true);
-
-        GameController gameController = GameController.getController();
 
         // Add the mouse listener to the boardPanel
-        boardCellsPanel.addMouseListener(gameController);
+        boardPanel.addMouseListener(gameController);
 
-        getContentPane().addKeyListener(gameController);
-        getContentPane().setFocusTraversalKeysEnabled(false);
-        getContentPane().requestFocusInWindow();
+        setVisible(true);
     }
-    
-    /**
-     * Initializes the context buttons used in the GUI.
-     */
-    private void initializeContextButtons() {
-        contextButtons.put("roll", new JButton("Roll Dice"));
-        contextButtons.put("guess", new JButton("Guess Murder"));
-        contextButtons.put("solve", new JButton("Solve Attempt"));
-        contextButtons.put("end turn", new JButton("End Turn"));
-        contextButtons.put("new game", new JButton("New Game"));
-        contextButtons.put("quit", new JButton("Quit"));
-
-        contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
-        contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
-        contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
-        contextButtons.get("end turn").addActionListener(e -> GameController.endTurnClicked());
-        contextButtons.get("new game").addActionListener(e -> GameController.createNewGame());
-        contextButtons.get("quit").addActionListener(e -> confirmQuit());
-    }
-    
-    /**
-     * Displays a confirmation dialog for quitting the game.
-     */
-    void confirmQuit() {
-        int result = JOptionPane.showConfirmDialog(
-                this,
-                "Are you sure you want to quit the game?",
-                "Confirm Quit",
-                JOptionPane.YES_NO_OPTION
-        );
-        if (result == JOptionPane.YES_OPTION) {
-            System.exit(0);
-        }
+    public static void quitGame(){
+        System.out.println("Not IOM");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     /**
@@ -176,10 +151,8 @@ public class GameView extends JFrame {
      * @param title
      */
     public void setBoardTitle(String title){
-        SwingUtilities.invokeLater(() -> {
-            boardTitle.setText(title);
-            boardPanel.revalidate();
-        });
+        boardTitle.setText(title);
+        boardPanel.revalidate();
     }
 
     /**
@@ -234,78 +207,69 @@ public class GameView extends JFrame {
      * Update the boardPanel based on the current game state
      * (center panel)
      */
-    public void updateBoard() {
-        SwingUtilities.invokeLater(() -> {
-            if (Game.getState() == Game.GameState.GameSetup) { return; }
+    public void updateBoard(Graphics g) {
+        // Update the boardPanel based on the current game state
+        if (Game.getState() == Game.GameState.GameSetup) {return;}
 
-            boardPanel.removeAll();
-            boardCellsPanel.setPreferredSize(new Dimension(480, 480)); // Set the size explicitly
+        boardPanel.removeAll();
 
-            boardPanel.add(boardCellsPanel, BorderLayout.CENTER);
-            boardPanel.add(boardTitle, BorderLayout.NORTH);
-            boardPanel.add(cardPanel, BorderLayout.SOUTH);
-
-            boardPanel.revalidate();
-            boardPanel.repaint();
-
-            // Set the focus to the board panel
-            getContentPane().requestFocusInWindow();
-        });
-    }
-
-    /**
-     * Draws the game board using graphics.
-     *
-     * @param g The Graphics object used for drawing.
-     */
-    private void drawBoard(Graphics g) {
         Cell[][] board = Game.getGameInstance().getBoard().getBoard();
-        if (board == null) throw new NullPointerException("When trying to draw board in view");
+
+        if (board==null) throw new NullPointerException("When trying to update board in view");
+
+        JPanel buttonCellPanel = new JPanel();
+        buttonCellPanel.setLayout(new GridLayout(board.length,board.length));
 
         int offset = 20;
-
-        System.out.println("rows: " + board.length + " cols: " + board[0].length);
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[0].length; col++) {
+        for(int row = 0; row<board.length;row++){
+            for(int col = 0; col < board[0].length;col++){
+                // TODO: use mouselistener in controller
                 Cell cell = board[row][col];
-                g.setColor(cell.getColor());
-                g.fillRect(col * offset, row * offset, offset, offset);
-                g.setColor(Color.BLACK);
-                if(cell.getClass() == Person.class) {
-                    g.drawString(cell.getDisplayChar(), col * offset + 5, row * offset + 15);
+
+                if(cell.getDisplayChar()=="_"){
+                    g.setColor( ((row+col) %2 ==0 )?Color.white :new Color(200,200,200) );
+                    g.fillRect(col*offset,row*offset,offset,offset);
+                }else{
+
+                    g.setColor(cell.getColor());
+
+                    g.fillRect(col*offset,row*offset,offset,offset);
                 }
-                g.drawRect(col * offset, row * offset, offset, offset);
+                if(cell.getDisplayChar().equals("L") || cell.getDisplayChar().equals("M") || cell.getDisplayChar().equals("P") ||cell.getDisplayChar().equals("B")){
+
+                    g.setColor(Color.BLACK);
+                    g.drawString(cell.getDisplayChar(), col*offset + 6,row*offset+ 15);
+                }
+
+
+
             }
         }
-    }
 
+        buttonCellPanel.setPreferredSize(new Dimension(500,500));
+        boardPanel.add(buttonCellPanel,BorderLayout.CENTER);
+        boardPanel.add(boardTitle,BorderLayout.NORTH);
+
+        boardPanel.revalidate();
+        repaint();
+    }
 
     /**
      * Update the infoArea based on the current game state
      * (right panel)
      */
     public void updateInfo(String info) {
-        SwingUtilities.invokeLater(() -> {
-            infoAreaText.setText(info);
-            repaint();
-        });
+        // Update the infoArea with new information
+        infoAreaText.setText(info);
+        repaint();
     }
 
-    /**
-     * Attaches a game instance to the view.
-     *
-     * @param game The game instance to attach.
-     * @return The updated GameView instance.
-     */
     public GameView attachGame(Game game) {
         this.game = game;
         displaySetup();
         return this;
     }
 
-    /**
-     * Displays the initial setup panel for player selection.
-     */
     public void displaySetup() {
         boardPanel.removeAll();
 
@@ -314,24 +278,8 @@ public class GameView extends JFrame {
         JRadioButton threePlayers = new JRadioButton("3 Players");
         JRadioButton fourPlayers = new JRadioButton("4 Players");
 
-        ActionListener radioButtonListener = e -> {
-            SwingUtilities.invokeLater(() -> {
-                if (e.getActionCommand().equals("3 Players")) {
-                    GameController.setupPlayers(3);
-                } else if (e.getActionCommand().equals("4 Players")) {
-                    GameController.setupPlayers(4);
-                }
-                setupPanel.removeAll();
-                boardPanel.remove(setupPanel);
-                boardPanel.revalidate();
-                boardPanel.repaint();
-            });
-        };
-
-        threePlayers.setActionCommand("3 Players");
-        fourPlayers.setActionCommand("4 Players");
-        threePlayers.addActionListener(radioButtonListener);
-        fourPlayers.addActionListener(radioButtonListener);
+        threePlayers.addActionListener(e -> GameController.setupPlayers(3));
+        fourPlayers.addActionListener(e -> GameController.setupPlayers(4));
 
         playerNumRadioButtons.add(threePlayers);
         playerNumRadioButtons.add(fourPlayers);
@@ -340,34 +288,19 @@ public class GameView extends JFrame {
         setupPanel.add(fourPlayers);
 
         boardPanel.add(setupPanel);
-        boardPanel.revalidate();
-        boardPanel.repaint();
     }
 
-    /**
-     * Displays the cards held by a player.
-     *
-     * @param playersCards The list of cards held by the player.
-     */
     public void showPlayersCards(List<Card> playersCards) {
-        SwingUtilities.invokeLater(() -> {
-            cardPanel = new JPanel();
-            cardPanel.setLayout(new GridLayout(1, playersCards.size()));
-            for (Card card : playersCards) {
-                cardPanel.add(new JLabel(card.getCardName()));
-            }
-            boardPanel.add(cardPanel, BorderLayout.SOUTH);
-            boardPanel.revalidate();
-        });
+        cardPanel = new JPanel();
+        cardPanel.setLayout(new GridLayout(1, playersCards.size()));
+        for (Card card : playersCards) {
+            cardPanel.add(new JLabel(card.getCardName()));
+        }
+        boardPanel.add(cardPanel, BorderLayout.SOUTH);
+        boardPanel.revalidate();
     }
 
-    /**
-     * Repaints the game board and updates the view.
-     */
     public void repaintBoard() {
-        SwingUtilities.invokeLater(() -> {
-            boardCellsPanel.repaint();
-            updateBoard();
-        });
+        boardPanel.repaint();
     }
 }
