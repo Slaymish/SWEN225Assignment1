@@ -236,9 +236,6 @@ public class GameView extends JFrame {
 
     private void drawBoard(Graphics g) { // Update the boardPanel based on the current game state
         if (Game.getState() == Game.GameState.GameSetup) {return;}
-
-        boardPanel.removeAll();
-
         Cell[][] board = Game.getGameInstance().getBoard().getBoard();
 
         if (board==null) throw new NullPointerException("When trying to update board in view");
