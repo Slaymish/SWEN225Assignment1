@@ -23,7 +23,6 @@ public class GameController implements KeyListener, MouseListener {
     }
 
     public static void endTurnClicked() {
-        System.out.println("End turn clicked");
         Game.getGameInstance().nextPlayerTurn();
         Game.getGameInstance().setGameState(Game.GameState.PlayerToMove);
         Game.getGameInstance().resetPlayerGuessed();

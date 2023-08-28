@@ -61,7 +61,7 @@ public class Solve_GuessAttempts {
 
             String[] people = {"Lucillia","Bert","Malina","Percy"};
             person = new JComboBox(people);
-            String[] weapons = {"Broom","Scissors","Knife","Shovel","Shovel","IPad"};
+            String[] weapons = {"Broom","Scissors","Knife","Shovel","IPad"};
             weapon = new JComboBox(weapons);
             //String[] estates = {"Haunted House","Manic Manor","Visitation Villa","Calamity Castle","Peril Palace"};
             String[] estates = {currentEstate};
@@ -86,7 +86,6 @@ public class Solve_GuessAttempts {
          * Handles the logic when the "Guess" button is pressed.
          */
         void ConfirmPressed(){
-
             Game g = Game.getGameInstance();
 
             HashMap<Player,Card> cards = new HashMap<Player,Card>();
@@ -131,8 +130,6 @@ public class Solve_GuessAttempts {
             return(c.equals(g.getCardByName((String)weapon.getSelectedItem())) ||
                     c.equals(g.getCardByName((String)estate.getSelectedItem())) ||
                             c.equals(g.getCardByName((String)person.getSelectedItem())));
-
-
         }
     }
 
@@ -158,7 +155,7 @@ public class Solve_GuessAttempts {
 
             String[] people = {"Lucillia","Bert","Malina","Percy"};
             person = new JComboBox(people);
-            String[] weapons = {"Broom","Scissors","Knife","Shovel","Shovel","IPad"};
+            String[] weapons = {"Broom","Scissors","Knife","Shovel","IPad"};
             weapon = new JComboBox(weapons);
             String[] estates = {"Haunted House","Manic Manor","Visitation Villa","Calamity Castle","Peril Palace"};
             estate = new JComboBox(estates);
