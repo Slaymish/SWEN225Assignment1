@@ -1,0 +1,33 @@
+class GameView {
+  //created from GameStates in Game.java
+  int playerNum;
+  sm{
+    GameSetup {
+      entry / {Menu};
+      setupPlayers -> GameView;
+    }
+    GameView {
+      PlayerToMove {
+        rollDice -> WaitingForPlayerToMove;
+      }
+      WaitingForPlayerToMove {
+          moveToCell [!insideEstate && !hasSolved] -> PlayerCanSolve;   
+        [insideEstate && !hasSolved] -> PlayerCanGuessAndSolve;
+      }
+      PlayerCanSolve {        
+        [playerNum == 0] -> PlayersLost;
+        Solve [correct] -> PlayerWon;
+        Solve [!correct] / {playerNum--;} -> PlayerToMove;
+        endTurn -> PlayerToMove;
+      }
+      PlayerCanGuessAndSolve {
+          [playerNum == 0] -> PlayersLost;
+        Solve [correct] -> PlayerWon;
+        Solve [!correct] / {playerNum--;} -> PlayerToMove;
+        endTurn -> PlayerToMove;
+      }
+    }
+  PlayerWon {}
+  PlayersLost {}
+  }
+}
