@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 public class Solve_GuessAttempts {
 
-    public void TryGuess(String estate){
-        GuessBox gb = new GuessBox(estate);
+    public void TryGuess(String estate,Player playerGuessing){
+        GuessBox gb = new GuessBox(estate,playerGuessing);
 
         gb.setLocation(400,300);
         gb.setSize(400,300);
@@ -15,8 +15,8 @@ public class Solve_GuessAttempts {
         gb.setVisible(true);
     }
 
-    public void TrySolve(){
-        SolveBox sb = new SolveBox();
+    public void TrySolve(Player playerSolving){
+        SolveBox sb = new SolveBox(playerSolving);
 
         sb.setLocation(400,300);
         sb.setSize(400,300);
@@ -32,7 +32,11 @@ public class Solve_GuessAttempts {
         JComboBox person;
         JComboBox weapon;
         JComboBox estate;
-        GuessBox(String currentEstate){
+
+        Player guessing;
+        GuessBox(String currentEstate, Player guessing){
+            this.guessing = guessing;
+
             String[] people = {"Lucillia","Bert","Malina","Percy"};
             person = new JComboBox(people);
             String[] weapons = {"Broom","Scissors","Knife","Shovel","Shovel","IPad"};
@@ -57,14 +61,14 @@ public class Solve_GuessAttempts {
 
         }
         void ConfirmPressed(){
-            System.out.println();
+
             Game g = Game.getGameInstance();
 
             HashMap<Player,Card> cards = new HashMap<Player,Card>();
 
             var players = g.getPlayerMap();
             for(int i : players.keySet()){
-
+                if(guessing.equals(players.get(i))) continue;   //skips self
                 for(Card c : players.get(i).getCards()){
                     if(containsCard(c)){
                         cards.put(players.get(i),c);
@@ -75,14 +79,19 @@ public class Solve_GuessAttempts {
             //display
             getContentPane().removeAll();
             repaint();
+            setLayout(new GridLayout(1,3));
+            if(cards.size()==0)add(new JLabel("No other players have any of those Cards"));
             for(Player p : cards.keySet()){
                 add(new JLabel(p.getName() + " has " + cards.get(p)));
             }
             revalidate();
+            pack();
 
-            boolean guess = false; // TODO check if guess is correct
+            boolean guess = false;
+
 
             Game.getGameInstance().guessMade(guess);
+            GameController.updateView();
         }
 
         boolean containsCard(Card c){
@@ -102,7 +111,13 @@ public class Solve_GuessAttempts {
         JComboBox person;
         JComboBox weapon;
         JComboBox estate;
-        SolveBox(){
+        Player guessing;
+        SolveBox(Player guessing){
+            //TODO Remove this DEBUG
+            System.out.println(Game.getGameInstance().getMurderer().toString());
+
+            this.guessing = guessing;
+
             String[] people = {"Lucillia","Bert","Malina","Percy"};
             person = new JComboBox(people);
             String[] weapons = {"Broom","Scissors","Knife","Shovel","Shovel","IPad"};
@@ -133,10 +148,30 @@ public class Solve_GuessAttempts {
                     g.getCardByName((String)estate.getSelectedItem()),
                     g.getCardByName((String)person.getSelectedItem())
             );
-            System.out.println(solve);
-            // TODO: change state if guess is correct/wrong
+
+            guessing.setHasGuessed(true);
             Game.getGameInstance().solveMade(solve);
+
+
+
+            if(solve)Game.getGameInstance().setGameState(Game.GameState.PlayerWon);//If solved correctly
             this.dispose();
+
+
+            //if !solve and all guessed, lose
+            boolean lose = solve;
+            int i = 0;
+            while(!lose){
+
+                if( Game.getGameInstance().getPlayerMap().get(i) == null ){
+                    Game.getGameInstance().setGameState(Game.GameState.PlayersLost);
+                    break;
+                }
+                lose = !Game.getGameInstance().getPlayerMap().get(i).getHasGuessed(); //lose = false if player has guessed
+                i++;
+            }
+
+            GameController.updateView();
         }
     }
 }
