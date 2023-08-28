@@ -228,7 +228,6 @@ public class GameController implements KeyListener, MouseListener {
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        // TODO: Implement mouse clicking on board
         // Get the row/col of the click
         int row = e.getY()/20;
         int col = e.getX()/20;
