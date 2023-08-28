@@ -87,8 +87,7 @@ public class Solve_GuessAttempts {
             revalidate();
             pack();
 
-            boolean guess = false;
-
+            boolean guess = false; // TODO: Change to true if player guesses correctly
 
             Game.getGameInstance().guessMade(guess);
             GameController.updateView();
@@ -100,8 +99,6 @@ public class Solve_GuessAttempts {
             return(c.equals(g.getCardByName((String)weapon.getSelectedItem())) ||
                     c.equals(g.getCardByName((String)estate.getSelectedItem())) ||
                             c.equals(g.getCardByName((String)person.getSelectedItem())));
-
-
         }
     }
 

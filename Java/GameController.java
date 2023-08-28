@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -7,13 +8,11 @@ import java.util.List;
 import java.util.Optional;
 import javax.swing.JPanel;
 
-public class GameController extends JPanel implements KeyListener, MouseListener {
+public class GameController implements KeyListener, MouseListener {
     private static GameController instance;
 
     private GameController() {
         System.out.println("GameController created");
-        addKeyListener(this);
-        setFocusable(true);
     }
 
     public static GameController getController() {
@@ -33,6 +32,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
     }
 
     public void keyPressed(KeyEvent e) {
+        System.out.println("Key pressed: " + e.getKeyCode());
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Q) {

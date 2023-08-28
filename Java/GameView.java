@@ -46,6 +46,7 @@ public class GameView extends JFrame {
         boardPanel = new JPanel(); // You can customize this to display the game board
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
+        infoAreaText.setEditable(false);
         cardPanel = new JPanel();
         boardCellsPanel = new JPanel(){
             @Override
@@ -83,10 +84,6 @@ public class GameView extends JFrame {
             }
         });
 
-
-        GameController gameController = GameController.getController();
-        getContentPane().addKeyListener(gameController);
-
         menu.add(NewGameItem);
         menu.add(quitItem);
 
@@ -115,11 +112,16 @@ public class GameView extends JFrame {
         boardTitle = new JLabel();
         boardPanel.setLayout(new BorderLayout());
 
+        setVisible(true);
+
+        GameController gameController = GameController.getController();
 
         // Add the mouse listener to the boardPanel
-        boardPanel.addMouseListener(gameController);
+        boardCellsPanel.addMouseListener(gameController);
 
-        setVisible(true);
+        getContentPane().addKeyListener(gameController);
+        getContentPane().setFocusTraversalKeysEnabled(false);
+        getContentPane().requestFocusInWindow();
     }
 
     private void initializeContextButtons() {
@@ -226,6 +228,9 @@ public class GameView extends JFrame {
 
             boardPanel.revalidate();
             boardPanel.repaint();
+
+            // Set the focus to the board panel
+            getContentPane().requestFocusInWindow();
         });
     }
 
