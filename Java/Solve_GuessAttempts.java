@@ -2,8 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.HashMap;
 
+/**
+ * Class that handles creating and managing guess and solve dialog boxes.
+ */
 public class Solve_GuessAttempts {
 
+	/**
+     * Displays a guess dialog box for the current player.
+     *
+     * @param estate The estate where the guess is being made.
+     * @param playerGuessing The player making the guess.
+     */
     public void TryGuess(String estate,Player playerGuessing){
         GuessBox gb = new GuessBox(estate,playerGuessing);
 
@@ -15,6 +24,11 @@ public class Solve_GuessAttempts {
         gb.setVisible(true);
     }
 
+    /**
+     * Displays a solve dialog box for the current player.
+     *
+     * @param playerSolving The player attempting to solve the mystery.
+     */
     public void TrySolve(Player playerSolving){
         SolveBox sb = new SolveBox(playerSolving);
 
@@ -26,7 +40,9 @@ public class Solve_GuessAttempts {
         sb.setVisible(true);
     }
 
-
+    /**
+     * Inner class representing the guess dialog box.
+     */
     class GuessBox extends JDialog {
 
         JComboBox person;
@@ -34,6 +50,12 @@ public class Solve_GuessAttempts {
         JComboBox estate;
 
         Player guessing;
+        /**
+         * Constructs a guess dialog box.
+         *
+         * @param currentEstate The estate where the guess is being made.
+         * @param guessing The player making the guess.
+         */
         GuessBox(String currentEstate, Player guessing){
             this.guessing = guessing;
 
@@ -60,6 +82,9 @@ public class Solve_GuessAttempts {
             add(confirm);
 
         }
+        /**
+         * Handles the logic when the "Guess" button is pressed.
+         */
         void ConfirmPressed(){
 
             Game g = Game.getGameInstance();
@@ -94,6 +119,12 @@ public class Solve_GuessAttempts {
             GameController.updateView();
         }
 
+        /**
+         * Checks if a card is selected in the guess dialog.
+         *
+         * @param c The card to check.
+         * @return True if the card is selected, false otherwise.
+         */
         boolean containsCard(Card c){
             Game g = Game.getGameInstance();
 
@@ -105,13 +136,20 @@ public class Solve_GuessAttempts {
         }
     }
 
-
+    /**
+     * Inner class representing the solve dialog box.
+     */
     class SolveBox extends JDialog {
 
         JComboBox person;
         JComboBox weapon;
         JComboBox estate;
         Player guessing;
+        /**
+         * Constructs a solve dialog box.
+         *
+         * @param guessing The player attempting to solve the mystery.
+         */
         SolveBox(Player guessing){
             //TODO Remove this DEBUG
             System.out.println(Game.getGameInstance().getMurderer().toString());
@@ -140,6 +178,9 @@ public class Solve_GuessAttempts {
             add(confirm);
 
         }
+        /**
+         * Handles the logic when the "Solve" button is pressed.
+         */
         void ConfirmPressed(){
             Game g = Game.getGameInstance();
 
