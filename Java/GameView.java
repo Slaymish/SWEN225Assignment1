@@ -246,7 +246,6 @@ public class GameView extends JFrame {
         int offset = 20;
         for(int row = 0; row<board.length;row++) {
             for (int col = 0; col < board[0].length; col++) {
-                // TODO: use mouselistener in controller
                 Cell cell = board[row][col];
 
                 if (cell.getDisplayChar() == "_") {

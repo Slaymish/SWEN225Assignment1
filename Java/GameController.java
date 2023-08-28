@@ -180,7 +180,6 @@ public class GameController implements KeyListener, MouseListener {
                 view.setContextButtons("new game","quit");
             }
             case PlayersLost -> {
-                // TODO: Change to this state when EVERYONE loses
                 view.updateInfo("You all lost!!");
                 view.setContextButtons("new game","quit");
             }

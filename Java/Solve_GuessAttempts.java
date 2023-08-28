@@ -148,9 +148,6 @@ public class Solve_GuessAttempts {
          * @param guessing The player attempting to solve the mystery.
          */
         SolveBox(Player guessing){
-            //TODO Remove this DEBUG
-            System.out.println(Game.getGameInstance().getMurderer().toString());
-
             this.guessing = guessing;
 
             String[] people = {"Lucillia","Bert","Malina","Percy"};
