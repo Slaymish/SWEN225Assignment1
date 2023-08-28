@@ -38,14 +38,14 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
             GameView view = GameView.getView();
             Game game = view.getGame();
-            
+
             if(game.getState() == Game.GameState.PlayerCanGuessAndSolve) {
                 guessButtonClicked();
             }
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) {
             GameView view = GameView.getView();
             Game game = view.getGame();
-            
+
             if(game.getState() == Game.GameState.PlayerCanGuessAndSolve || game.getState() == Game.GameState.PlayerCanSolve) {
                 solveButtonClicked();
             }
@@ -74,7 +74,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         System.out.println("Player guessed");
 
         Solve_GuessAttempts gAttempt = new Solve_GuessAttempts();
-        gAttempt.TryGuess(Game.getGameInstance().currentPlayerInEstate().get().name);
+        gAttempt.TryGuess(Game.getGameInstance().currentPlayerInEstate().get().name,Game.getGameInstance().getCurrentPlayer());
 
         // Temporarily adds a guess to the info area
         GameView.getView().updateInfo("Player guessed");
@@ -86,7 +86,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         System.out.println("Solve Button");
 
         Solve_GuessAttempts gAttempt = new Solve_GuessAttempts();
-        gAttempt.TrySolve();
+        gAttempt.TrySolve(Game.getGameInstance().getCurrentPlayer());
 
         // Temporarily adds a solve to the info area
         GameView.getView().updateInfo("Player solved");
