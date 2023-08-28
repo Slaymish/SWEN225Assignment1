@@ -87,7 +87,8 @@ public class Solve_GuessAttempts {
             revalidate();
             pack();
 
-            boolean guess = false; // TODO: Change to true if player guesses correctly
+            boolean guess = false;
+
 
             Game.getGameInstance().guessMade(guess);
             GameController.updateView();
@@ -99,6 +100,8 @@ public class Solve_GuessAttempts {
             return(c.equals(g.getCardByName((String)weapon.getSelectedItem())) ||
                     c.equals(g.getCardByName((String)estate.getSelectedItem())) ||
                             c.equals(g.getCardByName((String)person.getSelectedItem())));
+
+
         }
     }
 
@@ -110,7 +113,8 @@ public class Solve_GuessAttempts {
         JComboBox estate;
         Player guessing;
         SolveBox(Player guessing){
-
+            //TODO Remove this DEBUG
+            System.out.println(Game.getGameInstance().getMurderer().toString());
 
             this.guessing = guessing;
 
