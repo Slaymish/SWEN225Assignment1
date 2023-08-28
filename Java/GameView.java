@@ -10,6 +10,8 @@ public class GameView extends JFrame {
     private Game game;
     private JPanel boardPanel;
 
+    private JPanel boardCellsPanel;
+
     private JPanel cardPanel;
 
     private JLabel boardTitle;
@@ -41,16 +43,17 @@ public class GameView extends JFrame {
         setSize(1000, 600);
 
         // Initialize components
-        boardPanel = new JPanel(){
-            @Override
-            public void paint(Graphics g) {
-                super.paint(g);
-                updateBoard(g);
-            }
-        }; // You can customize this to display the game board
+        boardPanel = new JPanel(); // You can customize this to display the game board
         infoArea = new JPanel(); // You can use this to display player information or game messages
         infoAreaText = new JTextArea();
         cardPanel = new JPanel();
+        boardCellsPanel = new JPanel(){
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+                drawBoard(g);
+            }
+        };
 
         // JMenu
         JMenuBar menuBar = new JMenuBar();
@@ -76,24 +79,13 @@ public class GameView extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int result = JOptionPane.showConfirmDialog(
-                        GameView.this,
-                        "Are you sure you want to quit the game?",
-                        "Confirm Quit",
-                        JOptionPane.YES_NO_OPTION
-                );	
-                if (result == JOptionPane.YES_OPTION) {
-                    System.exit(0);
-                } else {
-                    setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent window from closing
-                }
+                confirmQuit();
             }
         });
 
 
-
         GameController gameController = GameController.getController();
-        this.getContentPane().addKeyListener(gameController);
+        getContentPane().addKeyListener(gameController);
 
         menu.add(NewGameItem);
         menu.add(quitItem);
@@ -106,22 +98,7 @@ public class GameView extends JFrame {
         add(boardPanel, BorderLayout.WEST);
         add(infoArea, BorderLayout.EAST);
 
-        // add context buttons
-        contextButtons.put("roll", new JButton("Roll Dice"));
-        contextButtons.put("guess", new JButton("Guess Murder"));
-        contextButtons.put("solve", new JButton("Solve Attempt"));
-        contextButtons.put("end turn", new JButton("End Turn"));
-        contextButtons.put("new game", new JButton("New Game"));
-        contextButtons.put("quit", new JButton("Quit"));
-
-
-        // Add action listeners
-        contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
-        contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
-        contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
-        contextButtons.get("end turn").addActionListener(e -> GameController.endTurnClicked());
-        contextButtons.get("new game").addActionListener(e -> GameController.createNewGame());
-        contextButtons.get("quit").addActionListener(e -> GameController.quitGame());
+        initializeContextButtons();
 
         JPanel contextPanel = new JPanel();
 
@@ -137,8 +114,6 @@ public class GameView extends JFrame {
         // add title to boardpanel
         boardTitle = new JLabel();
         boardPanel.setLayout(new BorderLayout());
-        boardPanel.add(boardTitle, BorderLayout.NORTH);
-        boardPanel.add(cardPanel, BorderLayout.SOUTH);
 
 
         // Add the mouse listener to the boardPanel
@@ -146,9 +121,33 @@ public class GameView extends JFrame {
 
         setVisible(true);
     }
-    public static void quitGame(){
-        System.out.println("Not IOM");
-        throw new UnsupportedOperationException("Not implemented");
+
+    private void initializeContextButtons() {
+        contextButtons.put("roll", new JButton("Roll Dice"));
+        contextButtons.put("guess", new JButton("Guess Murder"));
+        contextButtons.put("solve", new JButton("Solve Attempt"));
+        contextButtons.put("end turn", new JButton("End Turn"));
+        contextButtons.put("new game", new JButton("New Game"));
+        contextButtons.put("quit", new JButton("Quit"));
+
+        contextButtons.get("roll").addActionListener(e -> GameController.rollDice());
+        contextButtons.get("guess").addActionListener(e -> GameController.guessButtonClicked());
+        contextButtons.get("solve").addActionListener(e -> GameController.solveButtonClicked());
+        contextButtons.get("end turn").addActionListener(e -> GameController.endTurnClicked());
+        contextButtons.get("new game").addActionListener(e -> GameController.createNewGame());
+        contextButtons.get("quit").addActionListener(e -> confirmQuit());
+    }
+
+    void confirmQuit() {
+        int result = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to quit the game?",
+                "Confirm Quit",
+                JOptionPane.YES_NO_OPTION
+        );
+        if (result == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
     }
 
     /**
@@ -156,8 +155,10 @@ public class GameView extends JFrame {
      * @param title
      */
     public void setBoardTitle(String title){
-        boardTitle.setText(title);
-        boardPanel.revalidate();
+        SwingUtilities.invokeLater(() -> {
+            boardTitle.setText(title);
+            boardPanel.revalidate();
+        });
     }
 
     /**
@@ -212,45 +213,53 @@ public class GameView extends JFrame {
      * Update the boardPanel based on the current game state
      * (center panel)
      */
-    public void updateBoard(Graphics g) {
-        // Update the boardPanel based on the current game state
-        if (Game.getState() == Game.GameState.GameSetup) {return;}
+    public void updateBoard() {
+        SwingUtilities.invokeLater(() -> {
+            if (Game.getState() == Game.GameState.GameSetup) { return; }
 
-        boardPanel.removeAll();
+            boardPanel.removeAll();
+            boardCellsPanel.setPreferredSize(new Dimension(480, 480)); // Set the size explicitly
 
+            boardPanel.add(boardCellsPanel, BorderLayout.CENTER);
+            boardPanel.add(boardTitle, BorderLayout.NORTH);
+            boardPanel.add(cardPanel, BorderLayout.SOUTH);
+
+            boardPanel.revalidate();
+            boardPanel.repaint();
+        });
+    }
+
+    private void drawBoard(Graphics g) {
         Cell[][] board = Game.getGameInstance().getBoard().getBoard();
-
-        if (board==null) throw new NullPointerException("When trying to update board in view");
-
-        JPanel buttonCellPanel = new JPanel();
-        buttonCellPanel.setLayout(new GridLayout(board.length,board.length));
+        if (board == null) throw new NullPointerException("When trying to draw board in view");
 
         int offset = 20;
-        for(int row = 0; row<board.length;row++){
-            for(int col = 0; col < board[0].length;col++){
+
+        System.out.println("rows: " + board.length + " cols: " + board[0].length);
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[0].length; col++) {
                 Cell cell = board[row][col];
                 g.setColor(cell.getColor());
-                g.fillRect(col*offset,row*offset,offset,offset);
-                // TODO change the paint method to be for the button panel instead of the board panel
+                g.fillRect(col * offset, row * offset, offset, offset);
+                g.setColor(Color.BLACK);
+                if(cell.getClass() == Person.class) {
+                    g.drawString(cell.getDisplayChar(), col * offset + 5, row * offset + 15);
+                }
+                g.drawRect(col * offset, row * offset, offset, offset);
             }
         }
-
-        buttonCellPanel.setPreferredSize(new Dimension(500,500));
-        boardPanel.add(buttonCellPanel,BorderLayout.CENTER);
-        boardPanel.add(boardTitle,BorderLayout.NORTH);
-
-        boardPanel.revalidate();
-        repaint();
     }
+
 
     /**
      * Update the infoArea based on the current game state
      * (right panel)
      */
     public void updateInfo(String info) {
-        // Update the infoArea with new information
-        infoAreaText.setText(info);
-        repaint();
+        SwingUtilities.invokeLater(() -> {
+            infoAreaText.setText(info);
+            repaint();
+        });
     }
 
     public GameView attachGame(Game game) {
@@ -267,8 +276,24 @@ public class GameView extends JFrame {
         JRadioButton threePlayers = new JRadioButton("3 Players");
         JRadioButton fourPlayers = new JRadioButton("4 Players");
 
-        threePlayers.addActionListener(e -> GameController.setupPlayers(3));
-        fourPlayers.addActionListener(e -> GameController.setupPlayers(4));
+        ActionListener radioButtonListener = e -> {
+            SwingUtilities.invokeLater(() -> {
+                if (e.getActionCommand().equals("3 Players")) {
+                    GameController.setupPlayers(3);
+                } else if (e.getActionCommand().equals("4 Players")) {
+                    GameController.setupPlayers(4);
+                }
+                setupPanel.removeAll();
+                boardPanel.remove(setupPanel);
+                boardPanel.revalidate();
+                boardPanel.repaint();
+            });
+        };
+
+        threePlayers.setActionCommand("3 Players");
+        fourPlayers.setActionCommand("4 Players");
+        threePlayers.addActionListener(radioButtonListener);
+        fourPlayers.addActionListener(radioButtonListener);
 
         playerNumRadioButtons.add(threePlayers);
         playerNumRadioButtons.add(fourPlayers);
@@ -277,19 +302,26 @@ public class GameView extends JFrame {
         setupPanel.add(fourPlayers);
 
         boardPanel.add(setupPanel);
+        boardPanel.revalidate();
+        boardPanel.repaint();
     }
 
     public void showPlayersCards(List<Card> playersCards) {
-        cardPanel = new JPanel();
-        cardPanel.setLayout(new GridLayout(1, playersCards.size()));
-        for (Card card : playersCards) {
-            cardPanel.add(new JLabel(card.getCardName()));
-        }
-        boardPanel.add(cardPanel, BorderLayout.SOUTH);
-        boardPanel.revalidate();
+        SwingUtilities.invokeLater(() -> {
+            cardPanel = new JPanel();
+            cardPanel.setLayout(new GridLayout(1, playersCards.size()));
+            for (Card card : playersCards) {
+                cardPanel.add(new JLabel(card.getCardName()));
+            }
+            boardPanel.add(cardPanel, BorderLayout.SOUTH);
+            boardPanel.revalidate();
+        });
     }
 
     public void repaintBoard() {
-        boardPanel.repaint();
+        SwingUtilities.invokeLater(() -> {
+            boardCellsPanel.repaint();
+            updateBoard();
+        });
     }
 }

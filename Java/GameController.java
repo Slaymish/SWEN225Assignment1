@@ -36,7 +36,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Q) {
-            GameView.getView().quitGame();
+            GameView.getView().confirmQuit();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
             GameView view = GameView.getView();
             Game game = view.getGame();

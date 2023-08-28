@@ -113,8 +113,7 @@ public class Solve_GuessAttempts {
         JComboBox estate;
         Player guessing;
         SolveBox(Player guessing){
-            //TODO Remove this DEBUG
-            System.out.println(Game.getGameInstance().getMurderer().toString());
+
 
             this.guessing = guessing;
 
