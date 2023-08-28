@@ -19,6 +19,11 @@ public class GameView extends JFrame {
     private JTextArea infoAreaText;
     private Map<String,JButton> contextButtons = new HashMap<>();
 
+    /**
+     * Retrieves the singleton instance of the GameView class.
+     *
+     * @return The singleton instance of the GameView class.
+     */
     public static GameView getView() {
         if (instance == null) {
             instance = new GameView();
@@ -26,10 +31,18 @@ public class GameView extends JFrame {
         return instance;
     }
 
+    /**
+     * Retrieves the current game instance.
+     *
+     * @return The current Game instance.
+     */
     public Game getGame() {
         return game;
     }
 
+    /**
+     * Private constructor for initializing the GameView.
+     */
     private GameView() {
         super("Cluedo");
 
@@ -123,7 +136,10 @@ public class GameView extends JFrame {
         getContentPane().setFocusTraversalKeysEnabled(false);
         getContentPane().requestFocusInWindow();
     }
-
+    
+    /**
+     * Initializes the context buttons used in the GUI.
+     */
     private void initializeContextButtons() {
         contextButtons.put("roll", new JButton("Roll Dice"));
         contextButtons.put("guess", new JButton("Guess Murder"));
@@ -139,7 +155,10 @@ public class GameView extends JFrame {
         contextButtons.get("new game").addActionListener(e -> GameController.createNewGame());
         contextButtons.get("quit").addActionListener(e -> confirmQuit());
     }
-
+    
+    /**
+     * Displays a confirmation dialog for quitting the game.
+     */
     void confirmQuit() {
         int result = JOptionPane.showConfirmDialog(
                 this,
@@ -234,6 +253,11 @@ public class GameView extends JFrame {
         });
     }
 
+    /**
+     * Draws the game board using graphics.
+     *
+     * @param g The Graphics object used for drawing.
+     */
     private void drawBoard(Graphics g) {
         Cell[][] board = Game.getGameInstance().getBoard().getBoard();
         if (board == null) throw new NullPointerException("When trying to draw board in view");
@@ -267,12 +291,21 @@ public class GameView extends JFrame {
         });
     }
 
+    /**
+     * Attaches a game instance to the view.
+     *
+     * @param game The game instance to attach.
+     * @return The updated GameView instance.
+     */
     public GameView attachGame(Game game) {
         this.game = game;
         displaySetup();
         return this;
     }
 
+    /**
+     * Displays the initial setup panel for player selection.
+     */
     public void displaySetup() {
         boardPanel.removeAll();
 
@@ -311,6 +344,11 @@ public class GameView extends JFrame {
         boardPanel.repaint();
     }
 
+    /**
+     * Displays the cards held by a player.
+     *
+     * @param playersCards The list of cards held by the player.
+     */
     public void showPlayersCards(List<Card> playersCards) {
         SwingUtilities.invokeLater(() -> {
             cardPanel = new JPanel();
@@ -323,6 +361,9 @@ public class GameView extends JFrame {
         });
     }
 
+    /**
+     * Repaints the game board and updates the view.
+     */
     public void repaintBoard() {
         SwingUtilities.invokeLater(() -> {
             boardCellsPanel.repaint();
