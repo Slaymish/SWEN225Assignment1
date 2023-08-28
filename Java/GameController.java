@@ -36,7 +36,7 @@ public class GameController extends JPanel implements KeyListener, MouseListener
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Q) {
-            GameView.getView().quitGame();
+            GameView.getView().confirmQuit();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
             GameView view = GameView.getView();
             Game game = view.getGame();
@@ -176,10 +176,14 @@ public class GameController extends JPanel implements KeyListener, MouseListener
                 view.displaySetup();
                 Game.getGameInstance().resetPlayerGuessed();
             }
-            case PlayerWon -> view.updateInfo("Player has won!");
+            case PlayerWon -> {
+                view.updateInfo("Player has won!");
+                view.setContextButtons("new game","quit");
+            }
             case PlayersLost -> {
                 // TODO: Change to this state when EVERYONE loses
                 view.updateInfo("You all lost!!");
+                view.setContextButtons("new game","quit");
             }
             case PlayerCanGuessAndSolve -> {
                 view.updateInfo("You can solve/guess nowww..");
