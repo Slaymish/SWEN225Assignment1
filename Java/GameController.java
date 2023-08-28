@@ -52,7 +52,7 @@ public class GameController implements KeyListener, MouseListener {
         if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
             createNewGame();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_Q) {
-            GameView.getView().confirmQuit();
+            GameView.getView().quitGame();
         } else if(e.isControlDown() && e.getKeyCode() == KeyEvent.VK_G) {
             GameView view = GameView.getView();
             Game game = view.getGame();
