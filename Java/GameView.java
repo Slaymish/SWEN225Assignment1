@@ -184,9 +184,13 @@ public class GameView extends JFrame {
                    break;
                case "guess":
                    but.setToolTipText("Click to make a guess about the murder.");
+
+                   //Override, disables if has guessed this turn
+                   but.setEnabled(!Game.getGameInstance().getIfCurrentPLayerGuessed());
                    break;
                case "solve":
                    but.setToolTipText("Click to attempt to solve the mystery.");
+
                    //Override, disables solve button if current player has already tried to solve
                    but.setEnabled(!Game.getGameInstance().getCurrentPlayer().getHasGuessed());
                    break;
